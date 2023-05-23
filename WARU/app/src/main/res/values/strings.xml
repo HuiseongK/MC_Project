@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">WARU</string>
+    <string name="notexist">오늘 하루를 기록 해보세요</string>
+    <string name="exist">오늘의 감정 점수: %s</string>
+    <string name="mainbtn">일기 기록하기</string>
+    <string name="date">%s년 %s월 %s일</string>
 </resources>

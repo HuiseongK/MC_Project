@@ -1,5 +1,6 @@
 package com.example.waru
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.waru.databinding.ActivityMainBinding
@@ -29,12 +30,18 @@ class MainActivity : AppCompatActivity() {
         calendarView.setOnDateChangedListener { widget, date, selected ->
             val selectedDate = date.date
 
-            // SubActivity로 이동하는 인텐트를 생성
-            //val intent = Intent(this, SubActivity::class.java)
-            //intent.putExtra("selectedDate", selectedDate)
+            val intent = Intent(this, SubActivity1::class.java)
+            val calendar = Calendar.getInstance()
+            calendar.time = selectedDate
 
-            // SubActivity로 이동
-            //startActivity(intent)
+            val year = calendar.get(Calendar.YEAR)
+            val month = calendar.get(Calendar.MONTH) + 1
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+            val formattedDate = String.format(Locale.getDefault(), "%04d년 %02d월 %02d일", year, month, day)
+            intent.putExtra("selectedDate", formattedDate)
+
+            startActivity(intent)
         }
     }
 }
