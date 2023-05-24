@@ -1,6 +1,7 @@
 package com.example.waru
 
 import android.os.Bundle
+import androidx.activity.OnBackPressedDispatcher
 import androidx.appcompat.app.AppCompatActivity
 import com.example.waru.databinding.AcitivitySub1Binding
 
@@ -11,12 +12,13 @@ class SubActivity1 :AppCompatActivity(){
         super.onCreate(savedInstanceState)
         binding = AcitivitySub1Binding.inflate(layoutInflater)
         setContentView(binding.root)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         binding.date.text=intent.getStringExtra("selectedDate")
     }
 
-    override fun onSupportNavigateUp() : Boolean {
-        setResult(RESULT_OK, intent)
-        finish()
-        return true
+    //뒤로가기 버튼 누르면 MainActivitiy로
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressedDispatcher.onBackPressed()
+        return super.onSupportNavigateUp()
     }
 }

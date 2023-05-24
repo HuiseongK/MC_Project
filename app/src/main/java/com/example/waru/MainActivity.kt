@@ -24,24 +24,28 @@ class MainActivity : AppCompatActivity() {
         val today = CalendarDay.from(year, month, day)
 
         // 앱이 켜지면 현재 날짜로 자동 선택됨
-        calendarView.setSelectedDate(today)
+        calendarView.selectedDate = today
 
-        //해당 날짜 선택하면 sub1로 이동
-        calendarView.setOnDateChangedListener { widget, date, selected ->
-            val selectedDate = date.date
+        //날짜 선택 후 버튼을 누르면 sub1로 날짜 데이터가 넘어감
+        binding.mainbtn.setOnClickListener {
+            val selectedDate = calendarView.selectedDate?.date
 
-            val intent = Intent(this, SubActivity1::class.java)
-            val calendar = Calendar.getInstance()
-            calendar.time = selectedDate
+            selectedDate?.let {
+                val intent = Intent(this, SubActivity1::class.java)
+                val calendar = Calendar.getInstance()
+                calendar.time = selectedDate
 
-            val year = calendar.get(Calendar.YEAR)
-            val month = calendar.get(Calendar.MONTH) + 1
-            val day = calendar.get(Calendar.DAY_OF_MONTH)
+                val year = calendar.get(Calendar.YEAR)
+                val month = calendar.get(Calendar.MONTH) + 1
+                val day = calendar.get(Calendar.DAY_OF_MONTH)
 
-            val formattedDate = String.format(Locale.getDefault(), "%04d년 %02d월 %02d일", year, month, day)
-            intent.putExtra("selectedDate", formattedDate)
+                val formattedDate = String.format(Locale.getDefault(), "%04d년 %02d월 %02d일", year, month, day)
+                intent.putExtra("selectedDate", formattedDate)
 
-            startActivity(intent)
+                startActivity(intent)
+            }
+
         }
+
     }
 }
