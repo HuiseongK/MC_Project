@@ -4,4 +4,8 @@
     <string name="exist">오늘의 감정 점수: %s</string>
     <string name="mainbtn">일기 기록하기</string>
     <string name="date">%s년 %s월 %s일</string>
+    <string name="result">감정 결과 페이지</string>
+    <string name="comment">코멘트 페이지</string>
+    <string name="Frag1">감정 분석 결과</string>
+    <string name="Frag2">코멘트</string>
 </resources>

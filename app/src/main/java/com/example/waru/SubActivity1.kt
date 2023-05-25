@@ -1,5 +1,6 @@
 package com.example.waru
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.OnBackPressedDispatcher
 import androidx.appcompat.app.AppCompatActivity
@@ -14,6 +15,11 @@ class SubActivity1 :AppCompatActivity(){
         setContentView(binding.root)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         binding.date.text=intent.getStringExtra("selectedDate")
+
+        binding.save.setOnClickListener {
+            val intent = Intent(this, SubActivity2::class.java)
+            startActivity(intent)
+        }
     }
 
     //뒤로가기 버튼 누르면 MainActivitiy로
