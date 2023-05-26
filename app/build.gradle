@@ -13,6 +13,10 @@ android {
     namespace 'com.example.waru'
     compileSdk 33
 
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+    }
+
     // google API
     configurations.all {
         resolutionStrategy {
@@ -62,6 +66,11 @@ dependencies {
     implementation 'com.prolificinteractive:material-calendarview:1.4.3'
     //noinspection GradleCompatible
     implementation 'com.android.support:design:28.0.0'
+
+    //Google API 클라이언트 라이브러리가 프로젝트에 추가
+    implementation 'com.google.api-client:google-api-client:1.31.0'
+    implementation 'com.google.api-client:google-api-client-android:1.31.0'
+    implementation 'com.google.apis:google-api-services-language:v1-rev20210512-1.31.0'
 
     // google API Client Libraries
     implementation("com.google.http-client:google-http-client:$googleApiClientVersion") {

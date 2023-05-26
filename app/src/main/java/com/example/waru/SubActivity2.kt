@@ -14,6 +14,10 @@ class SubActivity2 : AppCompatActivity() {
         binding = ActivitySub2Binding.inflate(layoutInflater)
         setContentView(binding.root)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        //해당 날짜 데이터를 넘겨받음
+        val date = intent.getStringExtra("selectedDate")
+
         val tab = binding.tab
         val tab1:TabLayout.Tab = tab.newTab()
         tab1.text="분석 결과"
@@ -23,19 +27,17 @@ class SubActivity2 : AppCompatActivity() {
         tab2.text="코멘트"
         tab.addTab(tab2)
 
-        // 해당 파일에 대한 정보를 호출하기 위해 추가
-        val filename = intent.getStringExtra("filename")
-
         //tab선택 전에 tab1이 실행되게 만들기 위해서 replaceFragment 메소드를 만들어줌
         tab.selectTab(tab1)
-        replaceFragment(FragmentOne(filename))
+        replaceFragment(FragmentOne(date))
 
         tab.addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener{
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 val transaction = supportFragmentManager.beginTransaction()
                 when(tab?.text){
-                    "분석 결과" -> transaction.replace(binding.tabContent.id,FragmentOne(filename))
-                    "코멘트" -> transaction.replace(binding.tabContent.id,FragmentTwo(filename))
+                    //intent로 넘겨받은 날짜를 인자로 넘김
+                    "분석 결과" -> transaction.replace(binding.tabContent.id,FragmentOne(date))
+                    "코멘트" -> transaction.replace(binding.tabContent.id,FragmentTwo(date))
                }
                 transaction.commit()
             }
