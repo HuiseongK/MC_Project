@@ -23,16 +23,19 @@ class SubActivity2 : AppCompatActivity() {
         tab2.text="코멘트"
         tab.addTab(tab2)
 
+        // 해당 파일에 대한 정보를 호출하기 위해 추가
+        val filename = intent.getStringExtra("filename")
+
         //tab선택 전에 tab1이 실행되게 만들기 위해서 replaceFragment 메소드를 만들어줌
         tab.selectTab(tab1)
-        replaceFragment(FragmentOne())
+        replaceFragment(FragmentOne(filename))
 
         tab.addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener{
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 val transaction = supportFragmentManager.beginTransaction()
                 when(tab?.text){
-                    "분석 결과" -> transaction.replace(binding.tabContent.id,FragmentOne())
-                    "코멘트" -> transaction.replace(binding.tabContent.id,FragmentTwo())
+                    "분석 결과" -> transaction.replace(binding.tabContent.id,FragmentOne(filename))
+                    "코멘트" -> transaction.replace(binding.tabContent.id,FragmentTwo(filename))
                }
                 transaction.commit()
             }

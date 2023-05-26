@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.waru.databinding.ActivitySub22Binding
 
-class FragmentTwo :Fragment() {
+class FragmentTwo(filename: String?) :Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
