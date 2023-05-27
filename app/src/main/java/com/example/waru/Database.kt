@@ -10,7 +10,7 @@ class Database {
     object DBContract {
         object Entry : BaseColumns {
             const val table_name1 = "table_name1"
-            //const val table_name2 = "texts_table"
+//            const val table_name2 = "table_name2"
             //const val table_name3 = "comment_table"
             const val date = "date"
             const val text = "text"
@@ -30,14 +30,19 @@ class Database {
         }
 
         override fun onCreate(db: SQLiteDatabase) {
-            val SQL_CREATE_ENTRIES = "CREATE TABLE ${DBContract.Entry.table_name1} (" +
+            val SQL_CREATE_ENTRIES = "CREATE TABLE IF NOT EXISTS ${DBContract.Entry.table_name1} (" +
                         "${BaseColumns._ID} INTEGER PRIMARY KEY," +
                         "${DBContract.Entry.date} TEXT," +
                         "${DBContract.Entry.text} TEXT," +
                         "${DBContract.Entry.sentimentScore} TEXT," +
                         "${DBContract.Entry.sentimentMagnitude} TEXT)"
 
-//            val TEXTS_TABLE =
+//            val table_name2 = "CREATE TABLE ${DBContract.Entry.table_name1} (" +
+//                    "${BaseColumns._ID} INTEGER PRIMARY KEY," +
+//                    "${DBContract.Entry.date} TEXT," +
+//                    "${DBContract.Entry.text} TEXT," +
+//                    "${DBContract.Entry.sentimentScore} TEXT," +
+//                    "${DBContract.Entry.sentimentMagnitude} TEXT)"
 //                "CREATE TABLE ${DBContract.Entry.table_name2} (" +
 //                        "${DBContract.Entry.texts} TEXT," +
 //                        "${DBContract.Entry.t_id} INTEGER," +
@@ -50,14 +55,16 @@ class Database {
 //                        "FOREIGN KEY (${DBContract.Entry.c_id}) REFERENCES ${DBContract.Entry.table_name1}(${BaseColumns._ID}))"
 //
             db.execSQL(SQL_CREATE_ENTRIES)
-//            db.execSQL(TEXTS_TABLE)
+//            db.execSQL(table_name2)
 //            db.execSQL(COMMENT_TABLE)
         }
 
         override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
             val SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS ${DBContract.Entry.table_name1}"
+//            val table_name2 = "DROP TABLE IF EXISTS ${DBContract.Entry.table_name2}"
 
             db.execSQL(SQL_DELETE_ENTRIES)
+//            db.execSQL(table_name2)
             onCreate(db)
         }
 

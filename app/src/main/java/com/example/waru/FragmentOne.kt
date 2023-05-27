@@ -32,6 +32,8 @@ class FragmentOne(private val date: String?) : Fragment() {
         binding.sentence.text = sentences ?: "No sentences available"
     }
 
+    //감정분석 결과 출력
+    //이전 감정분석 결과와 비교하여 동일하면 출력되지 않게 함 --> 한 문장의 감정분석 결과가 연속해서 출력되는 것을 막음
     private fun getAnalysisResultFromDatabase(date: String?): String? {
         if (!isDbHelperInitialized) {
             dbHelper = Database.DbHelper(requireContext())
@@ -54,23 +56,38 @@ class FragmentOne(private val date: String?) : Fragment() {
             null
         )
 
-        var result: String? = null
-        if (cursor.moveToFirst()) {
+        val resultBuilder = StringBuilder()
+
+        var prevScore: Float? = null
+        var prevMagnitude: Float? = null
+
+        cursor.moveToFirst()
+        while (!cursor.isAfterLast) {
             val scoreString =
                 cursor.getString(cursor.getColumnIndexOrThrow(Database.DBContract.Entry.sentimentScore))
             val magnitudeString =
                 cursor.getString(cursor.getColumnIndexOrThrow(Database.DBContract.Entry.sentimentMagnitude))
             val score = scoreString.toFloatOrNull()
             val magnitude = magnitudeString.toFloatOrNull()
-            if (score != null && magnitude != null) {
-                result = "Score: $score\nMagnitude: $magnitude"
+
+            //이전 감정분석 결과와 비교함 --> 한 문장당 감정 분석 결과가 하나씩만 나오게 만들어줌
+            if (score != null && magnitude != null && (score != prevScore || magnitude != prevMagnitude)) {
+                val result = "Score: $score\nMagnitude: $magnitude"
+                resultBuilder.append(result).append("\n")
+                prevScore = score
+                prevMagnitude = magnitude
             }
+
+            cursor.moveToNext()
         }
 
         cursor.close()
-        return result
+
+        val result = resultBuilder.toString().trim()
+        return if (result.isNotEmpty()) result else null
     }
 
+    //문장 출력
     private fun getSentencesFromDatabase(date: String?): String? {
         if (!isDbHelperInitialized) {
             dbHelper = Database.DbHelper(requireContext())
@@ -90,23 +107,20 @@ class FragmentOne(private val date: String?) : Fragment() {
             null
         )
 
-        val sentenceSet = mutableSetOf<String>() // 중복 제거를 위한 Set 사용
+        val sentenceSet = mutableSetOf<String>()
 
-        if (cursor.moveToFirst()) {
-            do {
-                val sentence =
-                    cursor.getString(cursor.getColumnIndexOrThrow(Database.DBContract.Entry.text))
-                sentenceSet.add(sentence)
-            } while (cursor.moveToNext())
+        cursor.moveToFirst()
+        //while문을 통해 한문장씩 출력되게 만듦
+        while (!cursor.isAfterLast) {
+            val sentence =
+                cursor.getString(cursor.getColumnIndexOrThrow(Database.DBContract.Entry.text))
+            sentenceSet.add(sentence)
+            cursor.moveToNext()
         }
 
         cursor.close()
 
-        if (sentenceSet.isNotEmpty()) {
-            return sentenceSet.joinToString("\n")
-        }
-
-        return null
+        return if (sentenceSet.isNotEmpty()) sentenceSet.joinToString("\n") else null
     }
 
 }
