@@ -6,6 +6,8 @@
     <string name="date">%s년 %s월 %s일</string>
     <string name="result">감정 결과 페이지</string>
     <string name="comment">코멘트 페이지</string>
+    <string name="score">score: %s</string>
+    <string name="magnitude">magnitude: %s</string>
     <string name="Frag1">감정 분석 결과</string>
     <string name="Frag2">코멘트</string>
 </resources>

@@ -9,6 +9,7 @@ import android.util.Log
 class Database {
     object DBContract {
         object Entry : BaseColumns {
+            const val TABLE_NAME = "myDBfile"
             const val table_name1 = "table_name1"
             const val table_name2 = "table_name2"
             const val table_name3 = "comment_table"
