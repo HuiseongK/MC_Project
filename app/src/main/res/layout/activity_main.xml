@@ -18,7 +18,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/Existmaintext"
+        android:id="@+id/Notmaintext"
         android:text="@string/notexist"
         android:gravity="center"
         android:textSize="25sp"/>
@@ -27,7 +27,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/Notmaintext"
+        android:id="@+id/Existmaintext"
         android:text="@string/exist"
         android:gravity="center"
         android:textSize="25sp"

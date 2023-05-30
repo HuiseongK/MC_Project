@@ -22,15 +22,12 @@ import com.google.api.services.language.v1.CloudNaturalLanguage
 import com.google.api.services.language.v1.CloudNaturalLanguageRequest
 import com.google.api.services.language.v1.CloudNaturalLanguageScopes
 import com.google.api.services.language.v1.model.AnalyzeSentimentRequest
+import com.google.api.services.language.v1.model.AnalyzeSentimentResponse
 import com.google.api.services.language.v1.model.Document
-import opennlp.tools.sentdetect.SentenceDetectorME
-import opennlp.tools.sentdetect.SentenceModel
-import java.io.File
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.BlockingQueue
-
 
 class SubActivity1 :AppCompatActivity(){
 
@@ -71,6 +68,7 @@ class SubActivity1 :AppCompatActivity(){
         binding.save.setOnClickListener {
             startAnalysis()
         }
+
     }
 
     //뒤로가기 버튼 누르면 MainActivitiy로
@@ -87,8 +85,8 @@ class SubActivity1 :AppCompatActivity(){
             editTextView!!.error = "empty_text_error_msg"
         } else {
             editTextView!!.error = null
-            val sentences = textToAnalyze.split(".").map { it.trim() }
-//            val sentences = detectSentences(textToAnalyze)
+
+            val sentences = listOf(textToAnalyze)
             if (sentences.isNotEmpty()) {
                 //문장별로 나누기 이전에, 이미 일기가 저장되어 있다면 해당 날짜의 일기를 삭제해줌
                 val date = binding.date.text.toString()
@@ -101,17 +99,11 @@ class SubActivity1 :AppCompatActivity(){
                         analyzeSentiment(sentence)
                     }
                 }
+
             }
+
         }
     }
-    // OpenNLP를 사용하여 문장 분리
-//    private fun detectSentences(text: String): List<String> {
-//        val modelFile = assets.open("en-sent.bin")
-//        val model = SentenceModel(modelFile)
-//        val sentenceDetector = SentenceDetectorME(model)
-//        val sentencesArray = sentenceDetector.sentDetect(text)
-//        return sentencesArray.toList()
-//    }
 
     // 감정 분석 요청 생성
     private fun analyzeSentiment(text: String?) {
@@ -172,7 +164,7 @@ class SubActivity1 :AppCompatActivity(){
             Toast.makeText(this@SubActivity1, "Response Recieved from Cloud NLP API", Toast.LENGTH_SHORT).show()
             try {
                 //saveResponseToDatabase 메서드 호출
-                saveResponseToDatabase(response)
+//                saveResponseToDatabase(response)
 //                resultTextView!!.text = response.toPrettyString()
 //                nestedScrollView!!.visibility = View.VISIBLE
                 saveResponseToInternalStorage(response)
@@ -182,11 +174,10 @@ class SubActivity1 :AppCompatActivity(){
 
     //db에 일기 날짜, 일기 내용, 분석 결과(score, magnitude)를 넣어줌
     // --> 문장별로 감정이 분석되기 때문에 문장별로 날짜가 생성됨
-
     private fun saveResponseToDatabase(response: GenericJson) {
         val db = dbHelper.writableDatabase
-        val analyzeSentimentResponse = response as com.google.api.services.language.v1.model.AnalyzeSentimentResponse
-
+        //AnalyzeSentimentResponse 형식으로 캐스팅
+        val analyzeSentimentResponse = response as AnalyzeSentimentResponse
         val date = binding.date.text.toString()
         val text = binding.daily.text.toString()
 
@@ -204,15 +195,7 @@ class SubActivity1 :AppCompatActivity(){
                         put(myEntry.sentimentScore, sentence.sentiment?.score?.toFloat() ?: -1f)
                         put(myEntry.sentimentMagnitude, sentence.sentiment?.magnitude?.toFloat() ?: -1f)
                     }
-                    // 문장별로 두번씩 DB에 저장되는 것을 막음
-                    val exists = db.query(
-                        myEntry.table_name1, null, "${myEntry.date} = ? AND ${myEntry.text} = ?",
-                        arrayOf(date, sentenceText), null, null, null
-                    ).count > 0
-
-                    if (!exists) {
-                        db.insert(myEntry.table_name1, null, sentenceValues)
-                    }
+                    db.insert(myEntry.table_name1, null, sentenceValues)
                 }
             }
         } else {
@@ -225,13 +208,52 @@ class SubActivity1 :AppCompatActivity(){
             }
             db.insert(myEntry.table_name1, null, values)
         }
-
         Log.d("TAG", "감정 분석 결과가 DB에 저장되었습니다.")
+
     }
+
+    private fun saveResponseFullToDatabase(response: GenericJson) {
+        val db = dbHelper.writableDatabase
+        val analyzeSentimentResponse = response as AnalyzeSentimentResponse
+        val date = binding.date.text.toString()
+        val text = binding.daily.text.toString()
+        val myEntry = Database.DBContract.Entry
+
+        val documentSentiment = analyzeSentimentResponse.documentSentiment
+        if (documentSentiment != null) {
+            val values = ContentValues().apply {
+                put(myEntry.date, date)
+                put(myEntry.text, text)
+                put(myEntry.sentimentScore, documentSentiment.score?.toFloat() ?: -1f)
+                put(myEntry.sentimentMagnitude, documentSentiment.magnitude?.toFloat() ?: -1f)
+            }
+            // 이미 저장된 결과 삭제
+            db.delete(myEntry.table_name2, "${myEntry.date} = ?", arrayOf(date))
+            db.insert(myEntry.table_name2, null, values)
+        }
+
+        // score 값에 따라 색깔 결정
+        val color = when {
+            documentSentiment.score ?: 0f >= 0.25f && documentSentiment.score ?: 0f <= 1.0f -> "red"
+            documentSentiment.score ?: 0f >= -0.25f && documentSentiment.score ?: 0f < 0.25f -> "blue"
+            else -> "green"
+        }
+        // 색깔 데이터 저장
+        val colorValues = ContentValues().apply {
+            put(myEntry.date, date)
+            put(myEntry.color, color)
+        }
+        Log.d("TAG", "색상이 DB에 저장되었습니다.")
+        db.insert(myEntry.table_name3, null, colorValues)
+
+        Log.d("TAG", "감정 전체 분석 결과가 DB에 저장되었습니다.")
+    }
+
 
     // db에 저장함
     private fun saveResponseToInternalStorage(response: GenericJson) {
         saveResponseToDatabase(response)
+        saveResponseFullToDatabase(response)
         // SubActivity2에서 저장된 분석 결과를 사용하기 위해 해당 날짜를 intent로 넘겨줌
         val intent = Intent(this, SubActivity2::class.java)
         intent.putExtra("selectedDate", binding.date.text)

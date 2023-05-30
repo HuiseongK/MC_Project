@@ -3,6 +3,7 @@ package com.example.waru
 import android.content.Intent
 import android.os.Bundle
 import android.provider.BaseColumns
+import android.provider.ContactsContract.Data
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.example.waru.databinding.ActivityMainBinding
@@ -30,19 +31,34 @@ class MainActivity : AppCompatActivity() {
 
         // 앱이 켜지면 현재 날짜로 자동 선택됨
         calendarView.selectedDate = today
+        val hasDiaryToday = checkIfDiaryExistsForDate(today)
+        if (hasDiaryToday) {
+            binding.Notmaintext.visibility= View.GONE
+            binding.Existmaintext.visibility=View.VISIBLE
+            val score = getScore(today)
+            binding.Existmaintext.text=getString(R.string.exist,score.toString())
+            binding.mainbtn.text = "일기 보러가기"
+        } else {
+            binding.Notmaintext.visibility= View.VISIBLE
+            binding.Existmaintext.visibility=View.GONE
+            binding.mainbtn.text = "일기 기록하기"
+        }
 
         //해당날짜의 일기 작성여부에 따라 버튼의 text 및 textView 변경
         calendarView.setOnDateChangedListener { _, selectedDate, _ ->
             val hasDiary = checkIfDiaryExistsForDate(selectedDate)
             if (hasDiary) {
-                binding.Notmaintext.visibility= View.VISIBLE
-                binding.Existmaintext.visibility=View.GONE
-                binding.mainbtn.text = "일기 보러가기"
-            } else {
                 binding.Notmaintext.visibility= View.GONE
                 binding.Existmaintext.visibility=View.VISIBLE
+                val score = getScore(selectedDate)
+                binding.Existmaintext.text=getString(R.string.exist,score.toString())
+                binding.mainbtn.text = "일기 보러가기"
+            } else {
+                binding.Notmaintext.visibility= View.VISIBLE
+                binding.Existmaintext.visibility=View.GONE
                 binding.mainbtn.text = "일기 기록하기"
             }
+
         }
 
         //날짜 선택 후 버튼을 누르면 sub1로 날짜 데이터가 넘어감
@@ -71,6 +87,8 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
+        // setDateColorForDiaryDates() 메서드 호출하여 일기 작성된 날짜의 색상을 설정
+        setDateColorForDiaryDates()
 
     }
     // 일기 존재 여부를 확인
@@ -100,6 +118,41 @@ class MainActivity : AppCompatActivity() {
         cursor.close()
 
         return hasDiary
+    }
+
+    private fun getScore(selectedDate: CalendarDay): Float? {
+        val selectedCalendar = selectedDate.calendar
+        val dateFormat = SimpleDateFormat("yyyy년 MM월 dd일", Locale.getDefault())
+        val dateString = dateFormat.format(selectedCalendar.time)
+
+        dbHelper = Database.DbHelper(this)
+        val db = dbHelper.readableDatabase
+
+        val projection = arrayOf(Database.DBContract.Entry.sentimentScore)
+        val selection = "${Database.DBContract.Entry.date} = ?"
+        val selectionArgs = arrayOf(dateString)
+
+        val cursor = db.query(
+            Database.DBContract.Entry.table_name2,
+            projection,
+            selection,
+            selectionArgs,
+            null,
+            null,
+            null
+        )
+
+        val score: Float?
+
+        //cursor.getFloat()을 이용하여 sentimentScore값을 가져옴
+        if (cursor.moveToFirst()) {
+            score = cursor.getFloat(cursor.getColumnIndexOrThrow(Database.DBContract.Entry.sentimentScore))
+        } else {
+            score = null
+        }
+
+        cursor.close()
+        return score
     }
 
     //해당 날짜에 일기가 있으면 일기 내용을 보내줌
@@ -138,4 +191,62 @@ class MainActivity : AppCompatActivity() {
 
         return if (diaryContent.isNotEmpty()) diaryContent else null
     }
+
+    //DB에 저장된 결과를 바탕으로, 일기가 저장되어 있으면 자동으로 db에 저장된 색상으로 변경시켜줌
+    private fun setDateColorForDiaryDates() {
+        dbHelper = Database.DbHelper(this)
+        val db = dbHelper.readableDatabase
+
+        val projection = arrayOf(Database.DBContract.Entry.date, Database.DBContract.Entry.color)
+        val sortOrder: String? = null
+
+        val cursor = db.query(
+            Database.DBContract.Entry.table_name3,
+            projection,
+            null,
+            null,
+            null,
+            null,
+            sortOrder
+        )
+
+        val decorators = mutableListOf<EventDecorator>()
+
+        while (cursor.moveToNext()) {
+            val dateString =
+                cursor.getString(cursor.getColumnIndexOrThrow(Database.DBContract.Entry.date))
+            val color =
+                cursor.getString(cursor.getColumnIndexOrThrow(Database.DBContract.Entry.color))
+
+            val dateFormat = SimpleDateFormat("yyyy년 MM월 dd일", Locale.getDefault())
+            val selectedCalendar = Calendar.getInstance()
+            selectedCalendar.time = dateFormat.parse(dateString)
+
+            val selectedDate = CalendarDay.from(
+                selectedCalendar.get(Calendar.YEAR),
+                selectedCalendar.get(Calendar.MONTH),
+                selectedCalendar.get(Calendar.DAY_OF_MONTH)
+            )
+
+            val colorResourceId = getColorResource(color)
+            if (colorResourceId != null) {
+                //EventDecorator 객체를 생성할 때 this를 사용하여 액티비티의 Context를 전달
+                decorators.add(EventDecorator(this, setOf(selectedDate), colorResourceId))
+            }
+        }
+
+        cursor.close()
+        binding.calender.addDecorators(decorators)
+    }
+
+    private fun getColorResource(color: String?): Int {
+        return when (color) {
+            "red" -> R.color.purple_200
+            "blue" -> R.color.purple_500
+            "green" -> R.color.purple_700
+            else -> R.color.black
+        }
+    }
+
+
 }

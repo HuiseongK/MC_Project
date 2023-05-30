@@ -25,11 +25,62 @@ class FragmentOne(private val date: String?) : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         dbHelper = Database.DbHelper(requireContext())  // dbHelper 초기화
         isDbHelperInitialized = true
+
+        val totalResult = getAnalysisResultFull(date)
+        binding.totalresult.text= totalResult ?:"No analysis result available"
+
         val result = getAnalysisResultFromDatabase(date)
         binding.result.text = result ?: "No analysis result available"
 
         val sentences = getSentencesFromDatabase(date)
         binding.sentence.text = sentences ?: "No sentences available"
+    }
+
+    //전체 총 분석결과 출력
+    private fun getAnalysisResultFull(date:String?): String?{
+        if (!isDbHelperInitialized) {
+            dbHelper = Database.DbHelper(requireContext())
+            isDbHelperInitialized = true
+        }
+        val db = dbHelper.readableDatabase
+        val projection = arrayOf(Database.DBContract.Entry.sentimentScore, Database.DBContract.Entry.sentimentMagnitude)
+        val selection = "${Database.DBContract.Entry.date} = ?"
+
+        // null 값인 경우 대체 값으로 처리
+        val selectionArgs = arrayOf(date ?: "")
+        val cursor = db.query(
+            Database.DBContract.Entry.table_name2,
+            projection,
+            selection,
+            selectionArgs,
+            null,
+            null,
+            null
+        )
+        val resultBuilder = StringBuilder()
+
+        cursor.moveToFirst()
+        while (!cursor.isAfterLast) {
+            val scoreString =
+                cursor.getString(cursor.getColumnIndexOrThrow(Database.DBContract.Entry.sentimentScore))
+            val magnitudeString =
+                cursor.getString(cursor.getColumnIndexOrThrow(Database.DBContract.Entry.sentimentMagnitude))
+            val score = scoreString.toFloatOrNull()
+            val magnitude = magnitudeString.toFloatOrNull()
+
+            if (score != null && magnitude != null) {
+                val result = "Score: $score\nMagnitude: $magnitude"
+                resultBuilder.append(result).append("\n")
+            }
+
+            cursor.moveToNext()
+        }
+
+        cursor.close()
+
+        val result = resultBuilder.toString().trim()
+        return if (result.isNotEmpty()) result else null
+
     }
 
     //감정분석 결과 출력
@@ -77,7 +128,6 @@ class FragmentOne(private val date: String?) : Fragment() {
         }
 
         cursor.close()
-
         val result = resultBuilder.toString().trim()
         return if (result.isNotEmpty()) result else null
     }
