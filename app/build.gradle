@@ -88,6 +88,9 @@ dependencies {
 
     // google API client Libraries 충돌 해결하기 위해 다시 호출
     implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
+
+    // OpenNLP를 사용
+    implementation 'org.apache.opennlp:opennlp-tools:1.9.3'
 }
 
 // google API Key 관련 부분

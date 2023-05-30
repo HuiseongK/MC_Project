@@ -23,6 +23,9 @@ import com.google.api.services.language.v1.CloudNaturalLanguageRequest
 import com.google.api.services.language.v1.CloudNaturalLanguageScopes
 import com.google.api.services.language.v1.model.AnalyzeSentimentRequest
 import com.google.api.services.language.v1.model.Document
+import opennlp.tools.sentdetect.SentenceDetectorME
+import opennlp.tools.sentdetect.SentenceModel
+import java.io.File
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.ArrayBlockingQueue
@@ -50,6 +53,10 @@ class SubActivity1 :AppCompatActivity(){
         setContentView(binding.root)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         binding.date.text=intent.getStringExtra("selectedDate")
+        val text = intent.getStringExtra("diaryContent")
+        if (text != null) {
+            binding.daily.setText(text)
+        }
 
         // dbHelper 초기화
         dbHelper = Database.DbHelper(this)
@@ -72,7 +79,6 @@ class SubActivity1 :AppCompatActivity(){
         return super.onSupportNavigateUp()
     }
 
-
     // 텍스트 감정 분석 시작
     // .을 기준으로 문장을 분리하여, 각 문장별로 감정 분석을 진행함
     private fun startAnalysis() {
@@ -82,7 +88,14 @@ class SubActivity1 :AppCompatActivity(){
         } else {
             editTextView!!.error = null
             val sentences = textToAnalyze.split(".").map { it.trim() }
+//            val sentences = detectSentences(textToAnalyze)
             if (sentences.isNotEmpty()) {
+                //문장별로 나누기 이전에, 이미 일기가 저장되어 있다면 해당 날짜의 일기를 삭제해줌
+                val date = binding.date.text.toString()
+                val db = dbHelper.writableDatabase
+                val myEntry = Database.DBContract.Entry
+                db?.delete(myEntry.table_name1, "${myEntry.date} = ?", arrayOf(date))
+
                 for (sentence in sentences) {
                     if (sentence.isNotEmpty()) {
                         analyzeSentiment(sentence)
@@ -91,6 +104,14 @@ class SubActivity1 :AppCompatActivity(){
             }
         }
     }
+    // OpenNLP를 사용하여 문장 분리
+//    private fun detectSentences(text: String): List<String> {
+//        val modelFile = assets.open("en-sent.bin")
+//        val model = SentenceModel(modelFile)
+//        val sentenceDetector = SentenceDetectorME(model)
+//        val sentencesArray = sentenceDetector.sentDetect(text)
+//        return sentencesArray.toList()
+//    }
 
     // 감정 분석 요청 생성
     private fun analyzeSentiment(text: String?) {
@@ -183,7 +204,15 @@ class SubActivity1 :AppCompatActivity(){
                         put(myEntry.sentimentScore, sentence.sentiment?.score?.toFloat() ?: -1f)
                         put(myEntry.sentimentMagnitude, sentence.sentiment?.magnitude?.toFloat() ?: -1f)
                     }
-                    db.insert(myEntry.table_name1, null, sentenceValues)
+                    // 문장별로 두번씩 DB에 저장되는 것을 막음
+                    val exists = db.query(
+                        myEntry.table_name1, null, "${myEntry.date} = ? AND ${myEntry.text} = ?",
+                        arrayOf(date, sentenceText), null, null, null
+                    ).count > 0
+
+                    if (!exists) {
+                        db.insert(myEntry.table_name1, null, sentenceValues)
+                    }
                 }
             }
         } else {

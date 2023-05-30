@@ -33,6 +33,7 @@ class FragmentOne(private val date: String?) : Fragment() {
     }
 
     //감정분석 결과 출력
+    //해당 날짜의 모든 결과가 보여지도록 수정
     //이전 감정분석 결과와 비교하여 동일하면 출력되지 않게 함 --> 한 문장의 감정분석 결과가 연속해서 출력되는 것을 막음
     private fun getAnalysisResultFromDatabase(date: String?): String? {
         if (!isDbHelperInitialized) {
@@ -58,9 +59,6 @@ class FragmentOne(private val date: String?) : Fragment() {
 
         val resultBuilder = StringBuilder()
 
-        var prevScore: Float? = null
-        var prevMagnitude: Float? = null
-
         cursor.moveToFirst()
         while (!cursor.isAfterLast) {
             val scoreString =
@@ -70,12 +68,9 @@ class FragmentOne(private val date: String?) : Fragment() {
             val score = scoreString.toFloatOrNull()
             val magnitude = magnitudeString.toFloatOrNull()
 
-            //이전 감정분석 결과와 비교함 --> 한 문장당 감정 분석 결과가 하나씩만 나오게 만들어줌
-            if (score != null && magnitude != null && (score != prevScore || magnitude != prevMagnitude)) {
+            if (score != null && magnitude != null) {
                 val result = "Score: $score\nMagnitude: $magnitude"
                 resultBuilder.append(result).append("\n")
-                prevScore = score
-                prevMagnitude = magnitude
             }
 
             cursor.moveToNext()
@@ -112,8 +107,7 @@ class FragmentOne(private val date: String?) : Fragment() {
         cursor.moveToFirst()
         //while문을 통해 한문장씩 출력되게 만듦
         while (!cursor.isAfterLast) {
-            val sentence =
-                cursor.getString(cursor.getColumnIndexOrThrow(Database.DBContract.Entry.text))
+            val sentence = cursor.getString(cursor.getColumnIndexOrThrow(Database.DBContract.Entry.text))
             sentenceSet.add(sentence)
             cursor.moveToNext()
         }

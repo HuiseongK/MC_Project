@@ -36,6 +36,7 @@ class Database {
                         "${DBContract.Entry.text} TEXT," +
                         "${DBContract.Entry.sentimentScore} TEXT," +
                         "${DBContract.Entry.sentimentMagnitude} TEXT)"
+//                    "PRIMARY KEY (${DBContract.Entry.date}, ${DBContract.Entry.text}))"
 
 //            val table_name2 = "CREATE TABLE ${DBContract.Entry.table_name1} (" +
 //                    "${BaseColumns._ID} INTEGER PRIMARY KEY," +
