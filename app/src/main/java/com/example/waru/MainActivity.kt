@@ -184,7 +184,7 @@ class MainActivity : AppCompatActivity() {
 
         while (cursor.moveToNext()) {
             val sentence = cursor.getString(cursor.getColumnIndexOrThrow(Database.DBContract.Entry.text))
-            stringBuilder.append(sentence).append("\n")
+            stringBuilder.append(sentence).append(" ")
         }
 
         cursor.close()

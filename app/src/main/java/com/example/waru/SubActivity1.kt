@@ -1,13 +1,17 @@
 package com.example.waru
 
 import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
+import android.icu.text.SimpleDateFormat
 import android.os.Bundle
+import android.provider.BaseColumns
 import android.text.TextUtils
 import android.util.Log
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.NestedScrollView
 import androidx.loader.app.LoaderManager
 import androidx.loader.content.Loader
 import com.example.waru.databinding.AcitivitySub1Binding
@@ -21,21 +25,28 @@ import com.google.api.services.language.v1.CloudNaturalLanguageScopes
 import com.google.api.services.language.v1.model.AnalyzeSentimentRequest
 import com.google.api.services.language.v1.model.AnalyzeSentimentResponse
 import com.google.api.services.language.v1.model.Document
+import com.prolificinteractive.materialcalendarview.CalendarDay
+import kotlinx.coroutines.*
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.BlockingQueue
 
-class SubActivity1 :AppCompatActivity(){
+class SubActivity1 :AppCompatActivity() {
 
     // 변수 선언
     lateinit var binding: AcitivitySub1Binding
     var editTextView: EditText? = null
     private var mCredential: GoogleCredential? = null
     private var mThread: Thread? = null
-    private val mRequests: BlockingQueue<CloudNaturalLanguageRequest<out GenericJson>> = ArrayBlockingQueue(3)
-    private val mApi = CloudNaturalLanguage.Builder(NetHttpTransport(), JacksonFactory.getDefaultInstance()) { request -> mCredential!!.initialize(request)}.build()
+    private val mRequests: BlockingQueue<CloudNaturalLanguageRequest<out GenericJson>> =
+        ArrayBlockingQueue(3)
+    private val mApi = CloudNaturalLanguage.Builder(
+        NetHttpTransport(),
+        JacksonFactory.getDefaultInstance()
+    ) { request -> mCredential!!.initialize(request) }.build()
     private lateinit var dbHelper: Database.DbHelper
+    private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
     companion object {
         private const val LOADER_ACCESS_TOKEN = 1
@@ -46,7 +57,9 @@ class SubActivity1 :AppCompatActivity(){
         binding = AcitivitySub1Binding.inflate(layoutInflater)
         setContentView(binding.root)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        binding.date.text=intent.getStringExtra("selectedDate")
+        binding.date.text = intent.getStringExtra("selectedDate")
+
+        val date = intent.getStringExtra("selectedDate")
         val text = intent.getStringExtra("diaryContent")
         if (text != null) {
             binding.daily.setText(text)
@@ -58,7 +71,6 @@ class SubActivity1 :AppCompatActivity(){
         // View 초기화
         editTextView = binding.daily
 
-
         // google API 준비
         prepareApi()
 
@@ -67,6 +79,75 @@ class SubActivity1 :AppCompatActivity(){
             startAnalysis()
         }
 
+        // 작성된 일기가 있는지 확인하여 버튼 텍스트 설정
+        val diaryExists = checkDiaryExists(date)
+        if (diaryExists) {
+            // 작성된 일기가 있을 경우
+            binding.save.text = "수정"
+        } else {
+            // 작성된 일기가 없을 경우
+            binding.save.text = "저장"
+        }
+
+
+    }
+
+    //db에 일기가 있는지 확인
+    private fun checkDiaryExists(date: String?): Boolean {
+        dbHelper = Database.DbHelper(this)
+        val db = dbHelper.readableDatabase
+
+        val projection = arrayOf(BaseColumns._ID)
+        val selection = "${Database.DBContract.Entry.date} = ?"
+        val selectionArgs = arrayOf(date)
+
+        val cursor = db.query(
+            Database.DBContract.Entry.table_name1,
+            projection,
+            selection,
+            selectionArgs,
+            null,
+            null,
+            null
+        )
+
+        val hasDiary = cursor.count > 0
+        cursor.close()
+        return hasDiary
+
+    }
+
+    //일기 내용이 동일한지 확인
+    private fun getDiaryContent(date: String): String? {
+        dbHelper = Database.DbHelper(this)
+        val db = dbHelper.readableDatabase
+
+        val projection = arrayOf(Database.DBContract.Entry.text)
+        val selection = "${Database.DBContract.Entry.date} = ?"
+        val selectionArgs = arrayOf(date)
+
+        val cursor = db.query(
+            Database.DBContract.Entry.table_name1,
+            projection,
+            selection,
+            selectionArgs,
+            null,
+            null,
+            null
+        )
+
+        val stringBuilder = StringBuilder()
+
+        while (cursor.moveToNext()) {
+            val sentence = cursor.getString(cursor.getColumnIndexOrThrow(Database.DBContract.Entry.text))
+            stringBuilder.append(sentence).append(" ")
+        }
+
+        cursor.close()
+
+        val diaryContent = stringBuilder.toString().trimEnd()
+
+        return if (diaryContent.isNotEmpty()) diaryContent else null
     }
 
     //뒤로가기 버튼 누르면 MainActivitiy로
@@ -76,56 +157,80 @@ class SubActivity1 :AppCompatActivity(){
     }
 
     // 텍스트 감정 분석 시작
-    // (변경전) .을 기준으로 문장을 분리하여, 각 문장별로 감정 분석을 진행함
-    // (변경) kss(Korean Sentence Splitter)를 사용하는하는걸로 변경함
+    //  kss(Korean Sentence Splitter)를 사용하는하는걸로 변경함
+    // 코루틴 사용 --> 백그라운드 스레드에서 UI 뷰에 접근
     private fun startAnalysis() {
-        val textToAnalyze = editTextView!!.text.toString()
-        if (TextUtils.isEmpty(textToAnalyze)) {
-            editTextView!!.error = "empty_text_error_msg"
-        } else {
-            editTextView!!.error = null
-
-            val resultList = ArrayList<String>()
-
-            var splitor = SplitSentence()
-            val sentences = splitor.Start_Split(textToAnalyze)
-            for (sentence in sentences) {
-                if (sentence.contains("\n")) {
-                    val splitResult = sentence.split("\n")
-                    splitResult.forEach{resultList.add(it)}
+        coroutineScope.launch(Dispatchers.Default) {
+            val textToAnalyze = editTextView!!.text.toString()
+            if (TextUtils.isEmpty(textToAnalyze)) {
+                withContext(Dispatchers.Main) {
+                    editTextView!!.error = "empty_text_error_msg"
                 }
-            }
+            } else {
+                //UI 스레드에서 실행되도록함 --> withContext를 사용하여 비동기 작업을 순차 코드처럼 작성
+                // 끝나기 전 까지 해당 코루틴 일시정지
+                withContext(Dispatchers.Main) {
+                    editTextView!!.error = null
+                }
 
-            if (resultList.isNotEmpty()) {
-                //문장별로 나누기 이전에, 이미 일기가 저장되어 있다면 해당 날짜의 일기를 삭제해줌
-                val date = binding.date.text.toString()
-                val db = dbHelper.writableDatabase
-                val myEntry = Database.DBContract.Entry
-                db?.delete(myEntry.table_name1, "${myEntry.date} = ?", arrayOf(date))
+                val splitor = SplitSentence()
+                val split = splitor.Start_Split(textToAnalyze)
 
-                for (sentence in resultList) {
-                    if (sentence.isNotEmpty()) {
-                        analyzeSentiment(sentence)
+                if (split.isNotEmpty()) {
+                    val date = binding.date.text.toString()
+                    val db = dbHelper.writableDatabase
+                    val myEntry = Database.DBContract.Entry
+                    // 문장별로 나누기 이전에 일기내용의 변화가 없으면 return하고 일기내용의 변화가 있으면 delete함
+                    val existingDiary = getDiaryContent(date)
+                    if (existingDiary != null && existingDiary == textToAnalyze) {
+                        Log.d("TAG", "일기의 변화가 없습니다")
+                        proceedToSubActivity2()
+                        return@launch
                     }
-                    Log.d("SPLIT", sentence)
+                    else db?.delete(myEntry.table_name1, "${myEntry.date} = ?", arrayOf(date))
+
+                    // 요청을 한 번만 보내기 위해 sentences 리스트 생성
+                    val sentences = mutableListOf<String>()
+
+                    for (sentence in split) {
+                        if (sentence.isNotEmpty()) {
+                            sentences.add(sentence)
+                        }
+                        Log.d("SPLIT", sentence)
+                    }
+
+                    // 요청을 한 번만 보내는 로직 추가
+                    // 문장 단위로 나눠준 것을 하나로 만들어서 analyzeSentiment가 한번만 실행되게 만들어줌 --> 문장수에 상관없이 요청은 한번만 발생
+                    if (sentences.isNotEmpty()) {
+                        val combinedText = sentences.joinToString(" ")
+                        analyzeSentiment(combinedText)
+                    }
                 }
             }
         }
     }
 
-    // 감정 분석 요청 생성
-    private fun analyzeSentiment(text: String?) {
-        try {
-            mRequests.add(
-                mApi.documents().analyzeSentiment(
-                    AnalyzeSentimentRequest().setDocument(
-                        Document().setContent(text).setType("PLAIN_TEXT")
+    private fun proceedToSubActivity2() {
+        val intent = Intent(this, SubActivity2::class.java)
+        intent.putExtra("selectedDate", binding.date.text.toString())
+        startActivity(intent)
+    }
+
+    //감정 분석 요청 생성
+    private suspend fun analyzeSentiment(text: String?) {
+        withContext(Dispatchers.Default) {
+            try {
+                mRequests.add(
+                    mApi.documents().analyzeSentiment(
+                        AnalyzeSentimentRequest().setDocument(
+                            Document().setContent(text).setType("PLAIN_TEXT")
+                        )
                     )
                 )
-            )
-            Log.d("TAG", "요청 생성 완료")
-        } catch (e: IOException) {
-            Log.e("tag", "Failed to create analyze request.", e)
+                Log.d("TAG", "요청 생성 완료")
+            } catch (e: IOException) {
+                Log.e("tag", "Failed to create analyze request.", e)
+            }
         }
     }
 
@@ -133,25 +238,39 @@ class SubActivity1 :AppCompatActivity(){
     // API 토큰 로드
     @Suppress("DEPRECATION")
     private fun prepareApi() {
-        supportLoaderManager.initLoader(LOADER_ACCESS_TOKEN, null, object : LoaderManager.LoaderCallbacks<String> {
-            override fun onCreateLoader(id: Int, args: Bundle?): Loader<String> { return AccessTokenLoader(this@SubActivity1) }
-            override fun onLoadFinished(loader: Loader<String>, token: String) { setAccessToken(token) }
-            override fun onLoaderReset(loader: Loader<String>) {}
-        })
+        supportLoaderManager.initLoader(
+            LOADER_ACCESS_TOKEN,
+            null,
+            object : LoaderManager.LoaderCallbacks<String> {
+                override fun onCreateLoader(id: Int, args: Bundle?): Loader<String> {
+                    return AccessTokenLoader(this@SubActivity1)
+                }
+
+                override fun onLoadFinished(loader: Loader<String>, token: String) {
+                    setAccessToken(token)
+                }
+
+                override fun onLoaderReset(loader: Loader<String>) {}
+            })
     }
 
     // 액세스 토큰 설정
     private fun setAccessToken(token: String?) {
-        mCredential = GoogleCredential().setAccessToken(token).createScoped(CloudNaturalLanguageScopes.all())
+        mCredential =
+            GoogleCredential().setAccessToken(token).createScoped(CloudNaturalLanguageScopes.all())
         startWorkerThread()
     }
 
     // 작업 스레드 시작
     private fun startWorkerThread() {
-        if (mThread != null) { return }
+        if (mThread != null) {
+            return
+        }
         mThread = Thread {
             while (true) {
-                if (mThread == null) { break }
+                if (mThread == null) {
+                    break
+                }
                 try {
                     deliverResponse(mRequests.take().execute())
                 } catch (e: InterruptedException) {
@@ -164,6 +283,7 @@ class SubActivity1 :AppCompatActivity(){
         }
         mThread!!.start()
     }
+
 
     // API 응답 처리
     private fun deliverResponse(response: GenericJson) {
@@ -197,7 +317,10 @@ class SubActivity1 :AppCompatActivity(){
                         put(myEntry.date, date)
                         put(myEntry.text, sentenceText)
                         put(myEntry.sentimentScore, sentence.sentiment?.score?.toFloat() ?: -1f)
-                        put(myEntry.sentimentMagnitude, sentence.sentiment?.magnitude?.toFloat() ?: -1f)
+                        put(
+                            myEntry.sentimentMagnitude,
+                            sentence.sentiment?.magnitude?.toFloat() ?: -1f
+                        )
                     }
                     db.insert(myEntry.table_name1, null, sentenceValues)
                 }
@@ -207,8 +330,14 @@ class SubActivity1 :AppCompatActivity(){
             val values = ContentValues().apply {
                 put(myEntry.date, date)
                 put(myEntry.text, text)
-                put(myEntry.sentimentScore, analyzeSentimentResponse.documentSentiment?.score?.toFloat() ?: -1f)
-                put(myEntry.sentimentMagnitude, analyzeSentimentResponse.documentSentiment?.magnitude?.toFloat() ?: -1f)
+                put(
+                    myEntry.sentimentScore,
+                    analyzeSentimentResponse.documentSentiment?.score?.toFloat() ?: -1f
+                )
+                put(
+                    myEntry.sentimentMagnitude,
+                    analyzeSentimentResponse.documentSentiment?.magnitude?.toFloat() ?: -1f
+                )
             }
             db.insert(myEntry.table_name1, null, values)
         }
@@ -253,17 +382,14 @@ class SubActivity1 :AppCompatActivity(){
         Log.d("TAG", "감정 전체 분석 결과가 DB에 저장되었습니다.")
     }
 
-
     // db에 저장함
     private fun saveResponseToInternalStorage(response: GenericJson) {
         saveResponseToDatabase(response)
         saveResponseFullToDatabase(response)
         // SubActivity2에서 저장된 분석 결과를 사용하기 위해 해당 날짜를 intent로 넘겨줌
-        val intent = Intent(this, SubActivity2::class.java)
-        intent.putExtra("selectedDate", binding.date.text)
-        startActivity(intent)
+        proceedToSubActivity2()
 
-        }
     }
 
 
+}

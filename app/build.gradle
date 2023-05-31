@@ -94,6 +94,9 @@ dependencies {
     // kss-java
     implementation 'io.github.sangdee:kss-java:2.6.1'
 
+    //coroutine 사용
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3'
+
 }
 
 // google API Key 관련 부분
