@@ -78,7 +78,8 @@ class SubActivity1 :AppCompatActivity(){
     }
 
     // 텍스트 감정 분석 시작
-    // .을 기준으로 문장을 분리하여, 각 문장별로 감정 분석을 진행함
+    // (변경전) .을 기준으로 문장을 분리하여, 각 문장별로 감정 분석을 진행함
+    // (변경) kss(Korean Sentence Splitter)를 사용하는하는걸로 변경함
     private fun startAnalysis() {
         val textToAnalyze = editTextView!!.text.toString()
         if (TextUtils.isEmpty(textToAnalyze)) {
@@ -86,7 +87,12 @@ class SubActivity1 :AppCompatActivity(){
         } else {
             editTextView!!.error = null
 
-            val sentences = listOf(textToAnalyze)
+            var splitor = SplitSentence()
+            val sentences = splitor.Start_Split(textToAnalyze)
+//            for (s in sentences) {
+//                Log.d("SPLIT", s)
+//            }
+
             if (sentences.isNotEmpty()) {
                 //문장별로 나누기 이전에, 이미 일기가 저장되어 있다면 해당 날짜의 일기를 삭제해줌
                 val date = binding.date.text.toString()
@@ -98,10 +104,9 @@ class SubActivity1 :AppCompatActivity(){
                     if (sentence.isNotEmpty()) {
                         analyzeSentiment(sentence)
                     }
+                    Log.d("SPLIT", sentence)
                 }
-
             }
-
         }
     }
 

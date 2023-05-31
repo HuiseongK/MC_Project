@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.provider.BaseColumns
 import android.provider.ContactsContract.Data
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.example.waru.databinding.ActivityMainBinding
@@ -15,6 +16,7 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
     private lateinit var dbHelper: Database.DbHelper
     lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
