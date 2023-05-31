@@ -1,16 +1,13 @@
 package com.example.waru
 
 import android.content.ContentValues
-import android.content.Context
 import android.content.Intent
-import android.icu.text.SimpleDateFormat
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.widget.NestedScrollView
 import androidx.loader.app.LoaderManager
 import androidx.loader.content.Loader
 import com.example.waru.databinding.AcitivitySub1Binding
@@ -61,6 +58,7 @@ class SubActivity1 :AppCompatActivity(){
         // View 초기화
         editTextView = binding.daily
 
+
         // google API 준비
         prepareApi()
 
@@ -87,20 +85,25 @@ class SubActivity1 :AppCompatActivity(){
         } else {
             editTextView!!.error = null
 
+            val resultList = ArrayList<String>()
+
             var splitor = SplitSentence()
             val sentences = splitor.Start_Split(textToAnalyze)
-//            for (s in sentences) {
-//                Log.d("SPLIT", s)
-//            }
+            for (sentence in sentences) {
+                if (sentence.contains("\n")) {
+                    val splitResult = sentence.split("\n")
+                    splitResult.forEach{resultList.add(it)}
+                }
+            }
 
-            if (sentences.isNotEmpty()) {
+            if (resultList.isNotEmpty()) {
                 //문장별로 나누기 이전에, 이미 일기가 저장되어 있다면 해당 날짜의 일기를 삭제해줌
                 val date = binding.date.text.toString()
                 val db = dbHelper.writableDatabase
                 val myEntry = Database.DBContract.Entry
                 db?.delete(myEntry.table_name1, "${myEntry.date} = ?", arrayOf(date))
 
-                for (sentence in sentences) {
+                for (sentence in resultList) {
                     if (sentence.isNotEmpty()) {
                         analyzeSentiment(sentence)
                     }
@@ -168,10 +171,6 @@ class SubActivity1 :AppCompatActivity(){
         runOnUiThread {
             Toast.makeText(this@SubActivity1, "Response Recieved from Cloud NLP API", Toast.LENGTH_SHORT).show()
             try {
-                //saveResponseToDatabase 메서드 호출
-//                saveResponseToDatabase(response)
-//                resultTextView!!.text = response.toPrettyString()
-//                nestedScrollView!!.visibility = View.VISIBLE
                 saveResponseToInternalStorage(response)
             } catch (e: IOException) { e.printStackTrace() }
         }
@@ -266,3 +265,5 @@ class SubActivity1 :AppCompatActivity(){
 
         }
     }
+
+
