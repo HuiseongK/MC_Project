@@ -157,7 +157,7 @@ class SubActivity1 :AppCompatActivity() {
     }
 
     // 텍스트 감정 분석 시작
-    //  kss(Korean Sentence Splitter)를 사용하는하는걸로 변경함
+    //  kss(Korean Sentence Splitter)를 사용
     // 코루틴 사용 --> 백그라운드 스레드에서 UI 뷰에 접근
     private fun startAnalysis() {
         coroutineScope.launch(Dispatchers.Default) {
@@ -201,9 +201,15 @@ class SubActivity1 :AppCompatActivity() {
 
                     // 요청을 한 번만 보내는 로직 추가
                     // 문장 단위로 나눠준 것을 하나로 만들어서 analyzeSentiment가 한번만 실행되게 만들어줌 --> 문장수에 상관없이 요청은 한번만 발생
+                    // 루프와 조건문을 추가해 한번의 요청으로 API가 문장 별로 감정분석 가능하도록 수정함.
+
+                    var resultText = ""
                     if (sentences.isNotEmpty()) {
-                        val combinedText = sentences.joinToString(" ")
-                        analyzeSentiment(combinedText)
+                        for (sentence in sentences) {
+                            if(sentence.last() != '.'){ resultText += "$sentence. " }
+                            else{ resultText += "$sentence " }
+                        }
+                        analyzeSentiment(resultText)
                     }
                 }
             }
@@ -388,8 +394,5 @@ class SubActivity1 :AppCompatActivity() {
         saveResponseFullToDatabase(response)
         // SubActivity2에서 저장된 분석 결과를 사용하기 위해 해당 날짜를 intent로 넘겨줌
         proceedToSubActivity2()
-
     }
-
-
 }
