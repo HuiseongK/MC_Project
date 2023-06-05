@@ -8,6 +8,8 @@ import android.os.Bundle
 import android.provider.BaseColumns
 import android.text.TextUtils
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -50,6 +52,37 @@ class SubActivity1 :AppCompatActivity() {
 
     companion object {
         private const val LOADER_ACCESS_TOKEN = 1
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menu?.add(0,0,0,"일기 삭제")
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            0 -> {
+                deleteDiary()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun deleteDiary() {
+        val date = binding.date.text.toString()
+        val dbHelper = Database.DbHelper(this)
+        val db = dbHelper.writableDatabase
+
+        val myEntry = Database.DBContract.Entry
+        //해당 날짜의 일기내용 삭제
+        db.delete(myEntry.table_name1, "${myEntry.date} = ?", arrayOf(date))
+        db.delete(myEntry.table_name2, "${myEntry.date} = ?", arrayOf(date))
+        db.delete(myEntry.table_name3, "${myEntry.date} = ?", arrayOf(date))
+
+        binding.daily.setText("")
+
+        Toast.makeText(this, "일기가 삭제되었습니다.", Toast.LENGTH_SHORT).show()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

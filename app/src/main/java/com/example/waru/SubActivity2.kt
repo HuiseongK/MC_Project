@@ -20,11 +20,11 @@ class SubActivity2 : AppCompatActivity() {
 
         val tab = binding.tab
         val tab1:TabLayout.Tab = tab.newTab()
-        tab1.text="분석 결과"
+        tab1.text="코멘트"
         tab.addTab(tab1)
 
         val tab2:TabLayout.Tab = tab.newTab()
-        tab2.text="코멘트"
+        tab2.text="분석 결과"
         tab.addTab(tab2)
 
         //tab선택 전에 tab1이 실행되게 만들기 위해서 replaceFragment 메소드를 만들어줌
@@ -36,8 +36,8 @@ class SubActivity2 : AppCompatActivity() {
                 val transaction = supportFragmentManager.beginTransaction()
                 when(tab?.text){
                     //intent로 넘겨받은 날짜를 인자로 넘김
-                    "분석 결과" -> transaction.replace(binding.tabContent.id,FragmentOne(date))
-                    "코멘트" -> transaction.replace(binding.tabContent.id,FragmentTwo(date))
+                    "코멘트" -> transaction.replace(binding.tabContent.id,FragmentOne(date))
+                    "분석 결과" -> transaction.replace(binding.tabContent.id,FragmentTwo(date))
                }
                 transaction.commit()
             }

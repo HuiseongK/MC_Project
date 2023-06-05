@@ -171,7 +171,7 @@ class MainActivity : AppCompatActivity() {
         val selectionArgs = arrayOf(dateString)
 
         val cursor = db.query(
-            Database.DBContract.Entry.table_name1,
+            Database.DBContract.Entry.table_name2,
             projection,
             selection,
             selectionArgs,
@@ -238,6 +238,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         cursor.close()
+        //일기 삭제 후 다시 main으로 돌아왔을 때 해당 날짜의 색상을 삭제하기 위해 기존의 것 remove해줌
+        binding.calender.removeDecorators()
         binding.calender.addDecorators(decorators)
     }
 
@@ -250,5 +252,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    //main돌아왔을 때마다 다시 setDateColorForDiaryDates()를 실행시킴 -> 일기 삭제 or 수정되는 경우를 반영하기 위해
+    override fun onResume() {
+        super.onResume()
+        setDateColorForDiaryDates()
+    }
 
 }
