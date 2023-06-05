@@ -1,8 +1,10 @@
 package com.example.waru
 
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
+import android.database.Cursor
 import android.icu.text.SimpleDateFormat
 import android.os.Bundle
 import android.provider.BaseColumns
@@ -49,6 +51,7 @@ class SubActivity1 :AppCompatActivity() {
     ) { request -> mCredential!!.initialize(request) }.build()
     private lateinit var dbHelper: Database.DbHelper
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
+    var todayDate: String = ""
 
     companion object {
         private const val LOADER_ACCESS_TOKEN = 1
@@ -97,6 +100,9 @@ class SubActivity1 :AppCompatActivity() {
         if (text != null) {
             binding.daily.setText(text)
         }
+
+        // 선택 날짜 설정
+        todayDate = date.toString()
 
         // dbHelper 초기화
         dbHelper = Database.DbHelper(this)
@@ -425,7 +431,35 @@ class SubActivity1 :AppCompatActivity() {
     private fun saveResponseToInternalStorage(response: GenericJson) {
         saveResponseToDatabase(response)
         saveResponseFullToDatabase(response)
+
+        // 코멘트 DB에 저장
+        val open = openAI()
+        val key = open.getKey(baseContext)
+        val diary = readDiary(todayDate)
+        open.sendChatCompletionRequest(key, todayDate, diary, dbHelper)
+
         // SubActivity2에서 저장된 분석 결과를 사용하기 위해 해당 날짜를 intent로 넘겨줌
         proceedToSubActivity2()
     }
+
+
+    @SuppressLint("Range")
+    private fun readDiary(date: String?): String {
+        val db = dbHelper.readableDatabase
+        var diary: String = ""
+
+        val cursor: Cursor = db.rawQuery("SELECT text FROM table_name2 WHERE date = ?", arrayOf(date))
+
+        if (cursor.moveToFirst()) {
+            // 조회된 레코드가 있을 경우 해당 comment 값을 가져옴
+
+            diary = cursor.getString(cursor.getColumnIndex("text"))
+        }
+
+        cursor.close()
+        db.close()
+
+        return diary
+    }
+
 }

@@ -1,6 +1,8 @@
 package com.example.waru
 
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.database.Cursor
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -9,14 +11,17 @@ import com.google.android.material.tabs.TabLayout
 
 class SubActivity2 : AppCompatActivity() {
     lateinit var binding: ActivitySub2Binding
+    private lateinit var dbHelper: Database.DbHelper
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySub2Binding.inflate(layoutInflater)
         setContentView(binding.root)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        dbHelper = Database.DbHelper(this)
 
         //해당 날짜 데이터를 넘겨받음
-        val date = intent.getStringExtra("selectedDate")
+        var date = intent.getStringExtra("selectedDate")
 
         val tab = binding.tab
         val tab1:TabLayout.Tab = tab.newTab()
@@ -29,6 +34,7 @@ class SubActivity2 : AppCompatActivity() {
 
         //tab선택 전에 tab1이 실행되게 만들기 위해서 replaceFragment 메소드를 만들어줌
         tab.selectTab(tab1)
+        if(date == null){date = ""}
         replaceFragment(FragmentOne(date))
 
         tab.addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener{
@@ -68,5 +74,6 @@ class SubActivity2 : AppCompatActivity() {
         onBackPressed()
         return true
     }
+
 
 }

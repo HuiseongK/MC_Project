@@ -13,11 +13,16 @@ class Database {
             const val table_name1 = "table_name1"
             const val table_name2 = "table_name2"
             const val table_name3 = "comment_table"
+
             const val date = "date"
             const val text = "text"
             const val color = "color"
             const val sentimentScore = "sentimentScore"
             const val sentimentMagnitude = "sentimentMagnitude"
+
+            // 임시로 코멘트 저장하는 테이블 생성(테스트용)
+            const val table_name4 = "comment_result"
+            const val comment = "comment"
         }
     }
 
@@ -48,9 +53,15 @@ class Database {
                     "${DBContract.Entry.date} TEXT," +
                     "${DBContract.Entry.color} TEXT)"
 
+            val SQL_CREATE_ENTRIES4 = "CREATE TABLE IF NOT EXISTS ${DBContract.Entry.table_name4} (" +
+                    "${BaseColumns._ID} INTEGER PRIMARY KEY," +
+                    "${DBContract.Entry.date} TEXT," +
+                    "${DBContract.Entry.comment} TEXT)"
+
             db.execSQL(SQL_CREATE_ENTRIES1)
             db.execSQL(SQL_CREATE_ENTRIES2)
             db.execSQL(SQL_CREATE_ENTRIES3)
+            db.execSQL(SQL_CREATE_ENTRIES4)
 
         }
 
@@ -58,10 +69,12 @@ class Database {
             val SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS ${DBContract.Entry.table_name1}"
             val table_name2 = "DROP TABLE IF EXISTS ${DBContract.Entry.table_name2}"
             val table_name3 = "DROP TABLE IF EXISTS ${DBContract.Entry.table_name3}"
+            val table_name4 = "DROP TABLE IF EXISTS ${DBContract.Entry.table_name4}"
 
             db.execSQL(SQL_DELETE_ENTRIES)
             db.execSQL(table_name2)
             db.execSQL(table_name3)
+            db.execSQL(table_name4)
             onCreate(db)
         }
 

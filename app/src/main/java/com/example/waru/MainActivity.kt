@@ -24,6 +24,14 @@ class MainActivity : AppCompatActivity() {
 
         val calendarView: MaterialCalendarView = binding.calender
 
+        // gpt test
+//        val testbtn = binding.test
+//        val open = openAI()
+//        testbtn.setOnClickListener{
+//            val key = open.getKey(baseContext)
+//            open.sendChatCompletionRequest(key)
+//        }
+
         //현재 날짜 설정 -> calender객체 만들어줌
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
