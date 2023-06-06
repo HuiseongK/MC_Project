@@ -72,22 +72,6 @@ class SubActivity1 :AppCompatActivity() {
         }
     }
 
-    private fun deleteDiary() {
-        val date = binding.date.text.toString()
-        val dbHelper = Database.DbHelper(this)
-        val db = dbHelper.writableDatabase
-
-        val myEntry = Database.DBContract.Entry
-        //해당 날짜의 일기내용 삭제
-        db.delete(myEntry.table_name1, "${myEntry.date} = ?", arrayOf(date))
-        db.delete(myEntry.table_name2, "${myEntry.date} = ?", arrayOf(date))
-        db.delete(myEntry.table_name3, "${myEntry.date} = ?", arrayOf(date))
-
-        binding.daily.setText("")
-
-        Toast.makeText(this, "일기가 삭제되었습니다.", Toast.LENGTH_SHORT).show()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = AcitivitySub1Binding.inflate(layoutInflater)
@@ -141,13 +125,7 @@ class SubActivity1 :AppCompatActivity() {
         val selectionArgs = arrayOf(date)
 
         val cursor = db.query(
-            Database.DBContract.Entry.table_name1,
-            projection,
-            selection,
-            selectionArgs,
-            null,
-            null,
-            null
+            Database.DBContract.Entry.table_name2, projection, selection, selectionArgs, null, null, null
         )
 
         val hasDiary = cursor.count > 0
@@ -166,13 +144,7 @@ class SubActivity1 :AppCompatActivity() {
         val selectionArgs = arrayOf(date)
 
         val cursor = db.query(
-            Database.DBContract.Entry.table_name1,
-            projection,
-            selection,
-            selectionArgs,
-            null,
-            null,
-            null
+            Database.DBContract.Entry.table_name1, projection, selection, selectionArgs, null, null, null
         )
 
         val stringBuilder = StringBuilder()
@@ -221,12 +193,19 @@ class SubActivity1 :AppCompatActivity() {
                     val myEntry = Database.DBContract.Entry
                     // 문장별로 나누기 이전에 일기내용의 변화가 없으면 return하고 일기내용의 변화가 있으면 delete함
                     val existingDiary = getDiaryContent(date)
+                    Log.d("TAG", existingDiary.toString())
+                    Log.d("TAG", textToAnalyze)
                     if (existingDiary != null && existingDiary == textToAnalyze) {
                         Log.d("TAG", "일기의 변화가 없습니다")
                         proceedToSubActivity2()
                         return@launch
                     }
-                    else db?.delete(myEntry.table_name1, "${myEntry.date} = ?", arrayOf(date))
+                    else{
+                        db.delete(myEntry.table_name1, "${myEntry.date} = ?", arrayOf(date))
+                        db.delete(myEntry.table_name2, "${myEntry.date} = ?", arrayOf(date))
+                        db.delete(myEntry.table_name3, "${myEntry.date} = ?", arrayOf(date))
+                        db.delete(myEntry.table_name4, "${myEntry.date} = ?", arrayOf(date))
+                    }
 
                     // 요청을 한 번만 보내기 위해 sentences 리스트 생성
                     val sentences = mutableListOf<String>()
@@ -259,6 +238,25 @@ class SubActivity1 :AppCompatActivity() {
         val intent = Intent(this, SubActivity2::class.java)
         intent.putExtra("selectedDate", binding.date.text.toString())
         startActivity(intent)
+    }
+
+    private fun deleteDiary() {
+        val date = binding.date.text.toString()
+        val dbHelper = Database.DbHelper(this)
+        val db = dbHelper.writableDatabase
+
+        val myEntry = Database.DBContract.Entry
+        //해당 날짜의 일기내용 삭제
+        db.delete(myEntry.table_name1, "${myEntry.date} = ?", arrayOf(date))
+        db.delete(myEntry.table_name2, "${myEntry.date} = ?", arrayOf(date))
+        db.delete(myEntry.table_name3, "${myEntry.date} = ?", arrayOf(date))
+        db.delete(myEntry.table_name4, "${myEntry.date} = ?", arrayOf(date))
+
+        binding.daily.setText("")
+
+        runOnUiThread {
+            Toast.makeText(this, "일기가 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+        }
     }
 
     //감정 분석 요청 생성

@@ -46,22 +46,11 @@ class FragmentTwo(private val date: String?) : Fragment() {
             isDbHelperInitialized = true
         }
         val db = dbHelper.readableDatabase
-        val projection = arrayOf(
-            Database.DBContract.Entry.text,
-            Database.DBContract.Entry.sentimentScore,
-            Database.DBContract.Entry.sentimentMagnitude
-        )
-        val selection = "${Database.DBContract.Entry.date} = ?"
+        val query = "SELECT ${Database.DBContract.Entry.text}, ${Database.DBContract.Entry.sentimentScore}, ${Database.DBContract.Entry.sentimentMagnitude} " +
+                "FROM ${Database.DBContract.Entry.table_name1} " +
+                "WHERE ${Database.DBContract.Entry.date} = ?"
         val selectionArgs = arrayOf(date ?: "")
-        val cursor = db.query(
-            Database.DBContract.Entry.table_name1,
-            projection,
-            selection,
-            selectionArgs,
-            null,
-            null,
-            null
-        )
+        val cursor = db.rawQuery(query, selectionArgs)
 
         val sentenceList = mutableListOf<MyElement>()
 
@@ -95,20 +84,11 @@ class FragmentTwo(private val date: String?) : Fragment() {
             isDbHelperInitialized = true
         }
         val db = dbHelper.readableDatabase
-        val projection = arrayOf(Database.DBContract.Entry.sentimentScore, Database.DBContract.Entry.sentimentMagnitude)
-        val selection = "${Database.DBContract.Entry.date} = ?"
-
-        // null 값인 경우 대체 값으로 처리
+        val query = "SELECT ${Database.DBContract.Entry.text}, ${Database.DBContract.Entry.sentimentScore}, ${Database.DBContract.Entry.sentimentMagnitude} " +
+                "FROM ${Database.DBContract.Entry.table_name1} " +
+                "WHERE ${Database.DBContract.Entry.date} = ?"
         val selectionArgs = arrayOf(date ?: "")
-        val cursor = db.query(
-            Database.DBContract.Entry.table_name2,
-            projection,
-            selection,
-            selectionArgs,
-            null,
-            null,
-            null
-        )
+        val cursor = db.rawQuery(query, selectionArgs)
         val resultBuilder = StringBuilder()
 
         cursor.moveToFirst()

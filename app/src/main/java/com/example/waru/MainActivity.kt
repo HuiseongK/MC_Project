@@ -115,13 +115,7 @@ class MainActivity : AppCompatActivity() {
         val selectionArgs = arrayOf(dateString)
 
         val cursor = db.query(
-            Database.DBContract.Entry.table_name1,
-            projection,
-            selection,
-            selectionArgs,
-            null,
-            null,
-            null
+            Database.DBContract.Entry.table_name1, projection, selection, selectionArgs, null, null, null
         )
 
         val hasDiary = cursor.count > 0
@@ -143,13 +137,7 @@ class MainActivity : AppCompatActivity() {
         val selectionArgs = arrayOf(dateString)
 
         val cursor = db.query(
-            Database.DBContract.Entry.table_name2,
-            projection,
-            selection,
-            selectionArgs,
-            null,
-            null,
-            null
+            Database.DBContract.Entry.table_name2, projection, selection, selectionArgs, null, null, null
         )
 
         val score: Float?
@@ -179,13 +167,7 @@ class MainActivity : AppCompatActivity() {
         val selectionArgs = arrayOf(dateString)
 
         val cursor = db.query(
-            Database.DBContract.Entry.table_name2,
-            projection,
-            selection,
-            selectionArgs,
-            null,
-            null,
-            null
+            Database.DBContract.Entry.table_name2, projection, selection, selectionArgs, null, null, null
         )
 
         val stringBuilder = StringBuilder()
@@ -211,13 +193,7 @@ class MainActivity : AppCompatActivity() {
         val sortOrder: String? = null
 
         val cursor = db.query(
-            Database.DBContract.Entry.table_name3,
-            projection,
-            null,
-            null,
-            null,
-            null,
-            sortOrder
+            Database.DBContract.Entry.table_name3, projection, null, null, null, null, sortOrder
         )
 
         val decorators = mutableListOf<EventDecorator>()

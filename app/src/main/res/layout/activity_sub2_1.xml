@@ -11,32 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-<!--    <LinearLayout-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:orientation="horizontal"-->
-<!--        android:layout_weight="1">-->
-
-<!--        <TextView-->
-<!--            android:layout_weight="1"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:text="@string/result"-->
-<!--            android:id="@+id/sentence"-->
-<!--            android:gravity="center"-->
-<!--            android:textSize="20sp"/>-->
-
-<!--        <TextView-->
-<!--            android:layout_weight="1"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:text="@string/result"-->
-<!--            android:id="@+id/result"-->
-<!--            android:gravity="center"-->
-<!--            android:textSize="20sp"/>-->
-<!--    </LinearLayout>-->
-
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
