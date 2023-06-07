@@ -50,17 +50,27 @@ class openAI() {
         val authorizationHeaderValue = "Bearer $apiKey"
 
         // Prompt 초안
-        val prompt = "---\n" +
-                "아래 토픽의 내용이 긍정적이면 그에 알맞은 응답을 해주고 부정적이라면 해당 일기를 참고하여 조언이나 격려의 말을 해줘.\n" +
-                "아래의 옵션들을 지켜줘.\n" +
+//        val prompt = "---\n" +
+//                "아래 토픽의 내용이 긍정적이면 그에 알맞은 응답을 해주고 부정적이라면 해당 일기를 참고하여 조언이나 격려의 말을 해줘.\n" +
+//                "아래의 옵션들을 지켜줘.\n" +
+//                "\n" +
+//                "- Tone : 정중한\n" +
+//                "- Style : 간결하게\n" +
+//                "- Reader level : 대학생\n" +
+//                "- Length : 두 문장 이내로\n" +
+//                "- Perspective : 조언자\n" +
+//                "- Format : 대화문으로 출력하기\n" +
+//                "---"
+
+        val prompt = "Analyze user-provided diaries and generate responses to them.\n" +
+                "- If the content is positive, you can create a one-sentence comment, and if the content is practical, feedback the contents of the diary to generate comments of advice or encouragement.\n" +
                 "\n" +
-                "- Tone : 정중한\n" +
-                "- Style : 간결하게\n" +
-                "- Reader level : 대학생\n" +
-                "- Length : 두 문장 이내로\n" +
-                "- Perspective : 조언자\n" +
-                "- Format : 대화문으로 출력하기\n" +
-                "---"
+                "- Tone: Polite\n" +
+                "- Style: Concisely\n" +
+                "- Reader level: University students\n" +
+                "- Legnth: within 50 characters\n" +
+                "- Perspective: Advisor\n" +
+                "- Format: Print in dialog type answer format into Korean"
 
         val message = JSONArray().put(
             JSONObject()
@@ -79,10 +89,10 @@ class openAI() {
 
         // 요청 헤더 설정 & post 요청
         // authorizationHeaderValue 변수로 넣으면 요청 실패할 때가 있음
-        // 요청이 계속 실패되면 OPENAI API KEY를 "Bearer: KEY" 형태로 직접 넣어주면 정상적으로 작동함
+        // 요청이 계속 실패되면 OPENAI API KEY를 "Bearer KEY" 형태로 직접 넣어주면 정상적으로 작동함
         val request = Request.Builder()
             .url(url)
-            .header("Authorization", authorizationHeaderValue)
+            .header("Authorization", "Bearer $apiKey")
             .header("Content-Type", "application/json")
             .post(body)
             .build()
