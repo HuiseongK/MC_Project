@@ -28,7 +28,6 @@ class openAI() {
             var line: String?
             while (reader.readLine().also { line = it } != null) {
                 stringBuilder.append(line)
-                stringBuilder.append("\n")
             }
             reader.close()
         } catch(e: Exception){
@@ -45,9 +44,6 @@ class openAI() {
             .writeTimeout(120, TimeUnit.SECONDS)
             .readTimeout(60, TimeUnit.SECONDS)
             .build()
-
-        val url = "https://api.openai.com/v1/chat/completions"
-        val authorizationHeaderValue = "Bearer $apiKey"
 
         // Prompt 초안
 //        val prompt = "---\n" +
@@ -87,17 +83,16 @@ class openAI() {
 
         val body = RequestBody.create("application/json".toMediaTypeOrNull(), requestBody)
 
+        val url = "https://api.openai.com/v1/chat/completions"
+        val authorizationHeaderValue = "Bearer $apiKey"
+
         // 요청 헤더 설정 & post 요청
-        // authorizationHeaderValue 변수로 넣으면 요청 실패할 때가 있음
-        // 요청이 계속 실패되면 OPENAI API KEY를 "Bearer KEY" 형태로 직접 넣어주면 정상적으로 작동함
         val request = Request.Builder()
             .url(url)
-            .header("Authorization", "Bearer $apiKey")
+            .header("Authorization", authorizationHeaderValue)
             .header("Content-Type", "application/json")
             .post(body)
             .build()
-
-        println(request.toString())
 
         // 비동기적으로 요청 보내기
         client.newCall(request).enqueue(object : Callback {
