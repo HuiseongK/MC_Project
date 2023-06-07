@@ -15,6 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="500dp"
         android:hint="일기를 작성하세요"
+        android:maxLength="1000"
         android:id="@+id/daily"/>
 
     <Button

@@ -44,7 +44,7 @@ class FragmentOne(private val date: String) :Fragment() {
 
                 // 로딩 중 뷰 숨기기
                 hideLoadingView()
-            }, 4000)
+            }, 5000)
         }
 
 
