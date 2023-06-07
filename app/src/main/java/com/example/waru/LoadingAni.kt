@@ -6,9 +6,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
 class LoadingAni(private val loadingTextView: TextView) : AppCompatActivity() {
-//    private lateinit var loadingTextView: TextView
     private lateinit var animation: AlphaAnimation
-
 
     private fun animateLoadingText() {
         animation = AlphaAnimation(0.0f, 1.0f).apply {
