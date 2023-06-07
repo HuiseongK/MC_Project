@@ -144,7 +144,7 @@ class SubActivity1 :AppCompatActivity() {
         val selectionArgs = arrayOf(date)
 
         val cursor = db.query(
-            Database.DBContract.Entry.table_name1, projection, selection, selectionArgs, null, null, null
+            Database.DBContract.Entry.table_name2, projection, selection, selectionArgs, null, null, null
         )
 
         val stringBuilder = StringBuilder()
@@ -229,6 +229,7 @@ class SubActivity1 :AppCompatActivity() {
                         }
                         analyzeSentiment(resultText)
                     }
+
                 }
             }
         }
@@ -403,8 +404,6 @@ class SubActivity1 :AppCompatActivity() {
                 put(myEntry.sentimentScore, documentSentiment.score?.toFloat() ?: -1f)
                 put(myEntry.sentimentMagnitude, documentSentiment.magnitude?.toFloat() ?: -1f)
             }
-            // 이미 저장된 결과 삭제
-            db.delete(myEntry.table_name2, "${myEntry.date} = ?", arrayOf(date))
             db.insert(myEntry.table_name2, null, values)
         }
 
