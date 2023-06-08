@@ -16,7 +16,7 @@ class FragmentOne(private val date: String) :Fragment() {
     private lateinit var dbHelper: Database.DbHelper
     private var isDbHelperInitialized = false
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = ActivitySub22Binding.inflate(inflater, container, false)
         return binding.root
     }
@@ -33,9 +33,8 @@ class FragmentOne(private val date: String) :Fragment() {
         val hasDiary = checkDiaryExists(date)
 
         if (hasDiary) {
-            loading.stopAnimation()
             val comment = readComment(date)
-            binding.comment.text = comment
+            binding.lodingTextView.text = comment
         } else {
             loading.startLoding()
             startCheckingDiaryExists(loading)
