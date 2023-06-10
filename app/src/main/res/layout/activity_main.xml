@@ -7,6 +7,13 @@
     tools:context=".MainActivity"
     android:orientation="vertical">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/colortext"
+        android:text="@string/colortext"
+        android:visibility="gone"/>
+
     <com.prolificinteractive.materialcalendarview.MaterialCalendarView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,7 +21,6 @@
         app:mcv_showOtherDates="all"
         android:id="@+id/calender"/>
 
-    <!--DB에 해당 내용이 저장 되어 있지 않을 때/코틀린에서 동적으로 visible변경 -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -40,5 +46,6 @@
         android:id="@+id/mainbtn"
         android:textSize="20sp"
         android:text="@string/mainbtn"/>
+
 
 </LinearLayout>

@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.provider.BaseColumns
 import android.provider.ContactsContract.Data
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.example.waru.databinding.ActivityMainBinding
@@ -23,6 +25,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val calendarView: MaterialCalendarView = binding.calender
+        binding.colortext.setOnClickListener {
+            binding.colortext.visibility=View.GONE
+        }
 
         // gpt test
 //        val testbtn = binding.test
@@ -53,6 +58,7 @@ class MainActivity : AppCompatActivity() {
             binding.Existmaintext.visibility=View.GONE
             binding.mainbtn.text = "일기 기록하기"
         }
+
 
         //해당날짜의 일기 작성여부에 따라 버튼의 text 및 textView 변경
         calendarView.setOnDateChangedListener { _, selectedDate, _ ->
@@ -101,6 +107,28 @@ class MainActivity : AppCompatActivity() {
         setDateColorForDiaryDates()
 
     }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menu?.add(0,0,0,"색상 설명")
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            0 -> {
+                if (binding.colortext.visibility == View.VISIBLE) {
+                    binding.colortext.visibility = View.GONE
+                } else {
+                    binding.colortext.visibility = View.VISIBLE
+                }
+                true
+            }
+            else -> {
+                super.onOptionsItemSelected(item)
+            }
+        }
+    }
+
     // 일기 존재 여부를 확인
     private fun checkIfDiaryExistsForDate(selectedDate: CalendarDay): Boolean {
         val selectedCalendar = selectedDate.calendar
@@ -229,9 +257,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun getColorResource(color: String?): Int {
         return when (color) {
-            "red" -> R.color.purple_200
-            "blue" -> R.color.purple_500
-            "green" -> R.color.purple_700
+            "color1" -> R.color.purple_200
+            "color2" -> R.color.purple_500
+            "color3" -> R.color.purple_700
             else -> R.color.black
         }
     }

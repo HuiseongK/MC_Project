@@ -409,9 +409,9 @@ class SubActivity1 :AppCompatActivity() {
 
         // score 값에 따라 색깔 결정
         val color = when {
-            documentSentiment.score ?: 0f >= 0.25f && documentSentiment.score ?: 0f <= 1.0f -> "red"
-            documentSentiment.score ?: 0f >= -0.25f && documentSentiment.score ?: 0f < 0.25f -> "blue"
-            else -> "green"
+            documentSentiment.score ?: 0f >= 0.25f && documentSentiment.score ?: 0f <= 1.0f -> "color1"
+            documentSentiment.score ?: 0f >= -0.25f && documentSentiment.score ?: 0f < 0.25f -> "color2"
+            else -> "color3"
         }
         // 색깔 데이터 저장
         val colorValues = ContentValues().apply {
