@@ -19,7 +19,7 @@ class LoadingAni(private val loadingTextView: TextView) : AppCompatActivity() {
                 }
 
                 override fun onAnimationRepeat(animation: Animation?) {
-                    loadingTextView.text = "WARU가 코멘트를 생성하는 중..."
+                    loadingTextView.text = "당신의 하루는 어땠나요?"
                 }
 
                 override fun onAnimationEnd(animation: Animation?) {

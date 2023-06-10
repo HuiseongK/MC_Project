@@ -2,28 +2,39 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/sub1_background"
     android:orientation="vertical">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/date"
+        android:textColor="#ADA2FF"
         android:textSize="30sp"
+        android:fontFamily="@font/maplestory"
+        android:layout_margin="20sp"
         android:text="@string/date"/>
 
     <EditText
         android:layout_width="match_parent"
-        android:layout_height="500dp"
+        android:layout_height="400dp"
         android:hint="일기를 작성하세요"
+        android:layout_margin="20sp"
+        android:textColor="#000000"
+        android:fontFamily="@font/maplestory"
         android:maxLength="1000"
         android:id="@+id/daily"/>
 
-    <Button
-        android:layout_width="wrap_content"
+    <android.widget.Button
+        android:layout_width="200sp"
         android:layout_height="wrap_content"
+        android:background="@drawable/button_radius"
+        android:fontFamily="@font/maplestory"
+        android:textColor="#ADA2FF"
         android:layout_gravity="center"
+        android:textSize="20sp"
         android:id="@+id/save"
-        android:text="저장"/>
+        android:text="저장하기"/>
 
 
 </LinearLayout>

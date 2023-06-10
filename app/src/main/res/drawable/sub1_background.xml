@@ -1,0 +1,27 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#ADA2FF" />
+        </shape>
+    </item>
+    <item
+        android:left="8sp"
+        android:top="8sp"
+        android:right="8sp"
+        android:bottom="8sp">
+        <shape android:shape="rectangle">
+            <solid android:color="#FFE5F1" /> <!-- White color for the inner area -->
+            <stroke
+                android:width="2dp"
+                android:color="#C0DEFF" /> <!-- Black color for the border -->
+        </shape>
+    </item>
+    <item>
+        <bitmap
+            android:src="@drawable/book"
+            android:gravity="center_horizontal"
+            android:width="300sp"
+            android:height="300sp"
+            android:alpha="0.2" /> <!-- 0.5는 그림의 투명도를 50%로 설정함 -->
+    </item>
+</layer-list>

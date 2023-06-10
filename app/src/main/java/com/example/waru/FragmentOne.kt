@@ -51,12 +51,12 @@ class FragmentOne(private val date: String) :Fragment() {
     }
 
     private fun showLoadingView() {
-        binding.progressBar.visibility = View.VISIBLE
+        binding.lodingTextView.visibility = View.VISIBLE
         binding.comment.visibility = View.GONE
     }
 
     private fun hideLoadingView() {
-        binding.progressBar.visibility = View.GONE
+        binding.lodingTextView.visibility = View.GONE
         binding.comment.visibility = View.VISIBLE
     }
 

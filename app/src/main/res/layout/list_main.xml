@@ -2,25 +2,30 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/sub2_background"
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@drawable/sub2_background"
         android:layout_weight="1">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/result"
             android:id="@+id/sentence"
+            android:fontFamily="@font/maplestory"
             android:gravity="center"
             android:textSize="20sp"/>
     </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:background="@drawable/sub2_background"
         android:orientation="vertical">
         <TextView
             android:layout_width="match_parent"
@@ -28,6 +33,7 @@
             android:layout_weight="1"
             android:text="@string/score"
             android:id="@+id/score"
+            android:fontFamily="@font/maplestory"
             android:gravity="center"
             android:textSize="20sp"/>
 
@@ -35,7 +41,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:text="@string/magnitude"
+            android:fontFamily="@font/maplestory"
             android:id="@+id/magnitude"
             android:gravity="center"
             android:textSize="20sp"/>

@@ -1,51 +1,78 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/main_background"
     tools:context=".MainActivity"
+    android:fontFamily="@font/maplestory"
     android:orientation="vertical">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/colortext"
-        android:text="@string/colortext"
-        android:visibility="gone"/>
-
-    <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        app:mcv_showOtherDates="all"
-        android:id="@+id/calender"/>
+        android:layout_height="wrap_content">
 
+        <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:mcv_showOtherDates="all"
+            android:layout_margin="20sp"
+            android:fontFamily="@font/maplestory"
+            android:id="@+id/calender" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/colortext"
+            android:text="@string/colortext"
+            android:visibility="gone"
+            android:fontFamily="@font/maplestory"
+            android:textSize="20sp"
+            android:textColor="#ADA2FF"
+            android:layout_marginBottom="30sp"
+            android:layout_marginTop="20sp"
+            android:layout_below="@+id/calender"
+            android:layout_centerHorizontal="true" />
+
+    </RelativeLayout>
+
+    <!--DB에 해당 내용이 저장 되어 있지 않을 때/코틀린에서 동적으로 visible변경 -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/Notmaintext"
+        android:fontFamily="@font/maplestory"
         android:text="@string/notexist"
         android:gravity="center"
-        android:textSize="25sp"/>
+        android:textColor="#ADA2FF"
+        android:layout_marginBottom="40sp"
+        android:textSize="25sp" />
 
     <!--DB에 해당 내용이 저장되어 있을 때/코틀린에서 동적으로 visible변경 -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/Existmaintext"
+        android:layout_marginBottom="40sp"
         android:text="@string/exist"
+        android:textColor="#ADA2FF"
+        android:fontFamily="@font/maplestory"
         android:gravity="center"
         android:textSize="25sp"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+
+    <android.widget.Button
+        android:layout_width="200sp"
+        android:layout_height="50sp"
         android:layout_gravity="center"
         android:id="@+id/mainbtn"
+        android:background="@drawable/button_radius"
+        android:layout_marginBottom="40sp"
+        android:textColor="#ADA2FF"
+        android:fontFamily="@font/maplestory"
         android:textSize="20sp"
-        android:text="@string/mainbtn"/>
-
+        android:text="@string/mainbtn" />
 
 </LinearLayout>

@@ -7,8 +7,7 @@
     <string name="result">감정 결과 페이지</string>
     <string name="comment">코멘트 페이지</string>
     <string name="score">score: %s</string>
-    <string name="magnitude">magnitude: %s</string>
     <string name="Frag1">감정 분석 결과</string>
-    <string name="Frag2">코멘트</string>
-    <string name="colortext">0.25 - 1.0 : color1\n-0.25-0.25 : color2\n-1.0 - 0.25 : color3</string>
+    <string name="Frag2">오늘 하루</string>
+    <string name="colortext">0.25 ~ 1.0 : purple\n-0.25 ~ 0.25 : blue\n-1.0 ~ -0.25 : white</string>
 </resources>

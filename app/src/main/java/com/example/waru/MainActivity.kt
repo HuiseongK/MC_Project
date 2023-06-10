@@ -259,7 +259,7 @@ class MainActivity : AppCompatActivity() {
         return when (color) {
             "color1" -> R.color.purple_200
             "color2" -> R.color.purple_500
-            "color3" -> R.color.purple_700
+            "color3" -> R.color.white
             else -> R.color.black
         }
     }

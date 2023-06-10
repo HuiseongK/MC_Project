@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/sub2_background"
     android:orientation="vertical">
 
     <androidx.recyclerview.widget.RecyclerView
@@ -20,7 +21,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="@string/result"
+            android:fontFamily="@font/maplestory"
             android:id="@+id/totalresult"
+            android:layout_marginTop="300sp"
             android:gravity="center"
             android:textSize="20sp"/>
 
