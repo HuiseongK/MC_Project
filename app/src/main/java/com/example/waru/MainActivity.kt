@@ -266,9 +266,25 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    //main돌아왔을 때마다 다시 setDateColorForDiaryDates()를 실행시킴 -> 일기 삭제 or 수정되는 경우를 반영하기 위해
+    //main돌아왔을 때마다 다시 textView 변경 및 setDateColorForDiaryDates()를 실행시킴 -> 일기 삭제 or 수정되는 경우를 반영하기 위해
     override fun onResume() {
         super.onResume()
+
+        //다시 main으로 돌아왔을 때 상태에 따라 버튼 및 textView 변경
+        val today = CalendarDay.today()
+        val hasDiaryToday = checkIfDiaryExistsForDate(today)
+        if (hasDiaryToday) {
+            binding.Notmaintext.visibility = View.GONE
+            binding.Existmaintext.visibility = View.VISIBLE
+            val score = getScore(today)
+            binding.Existmaintext.text = getString(R.string.exist, score.toString())
+            binding.mainbtn.text = "일기 보러가기"
+        } else {
+            binding.Notmaintext.visibility = View.VISIBLE
+            binding.Existmaintext.visibility = View.GONE
+            binding.mainbtn.text = "일기 기록하기"
+        }
+
         setDateColorForDiaryDates()
     }
 
