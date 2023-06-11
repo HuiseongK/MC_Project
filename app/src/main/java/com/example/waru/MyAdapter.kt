@@ -23,6 +23,5 @@ class MyAdapter(private var dataSet: MutableList<MyElement>) : RecyclerView.Adap
 
         binding.sentence.text = currentElement.text
         binding.score.text = "Score: ${currentElement.sentimentScore}"
-        // binding.magnitude.text = "Magnitude: ${currentElement.sentimentMagnitude}"
     }
 }

@@ -361,10 +361,6 @@ class SubActivity1 :AppCompatActivity() {
                         put(myEntry.date, date)
                         put(myEntry.text, sentenceText)
                         put(myEntry.sentimentScore, sentence.sentiment?.score?.toFloat() ?: -1f)
-                        put(
-                            myEntry.sentimentMagnitude,
-                            sentence.sentiment?.magnitude?.toFloat() ?: -1f
-                        )
                     }
                     db.insert(myEntry.table_name1, null, sentenceValues)
                 }
@@ -377,10 +373,6 @@ class SubActivity1 :AppCompatActivity() {
                 put(
                     myEntry.sentimentScore,
                     analyzeSentimentResponse.documentSentiment?.score?.toFloat() ?: -1f
-                )
-                put(
-                    myEntry.sentimentMagnitude,
-                    analyzeSentimentResponse.documentSentiment?.magnitude?.toFloat() ?: -1f
                 )
             }
             db.insert(myEntry.table_name1, null, values)
@@ -402,7 +394,6 @@ class SubActivity1 :AppCompatActivity() {
                 put(myEntry.date, date)
                 put(myEntry.text, text)
                 put(myEntry.sentimentScore, documentSentiment.score?.toFloat() ?: -1f)
-                put(myEntry.sentimentMagnitude, documentSentiment.magnitude?.toFloat() ?: -1f)
             }
             db.insert(myEntry.table_name2, null, values)
         }

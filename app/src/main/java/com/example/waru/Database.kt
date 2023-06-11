@@ -38,15 +38,13 @@ class Database {
                         "${BaseColumns._ID} INTEGER PRIMARY KEY," +
                         "${DBContract.Entry.date} TEXT," +
                         "${DBContract.Entry.text} TEXT," +
-                        "${DBContract.Entry.sentimentScore} TEXT," +
-                        "${DBContract.Entry.sentimentMagnitude} TEXT)"
+                        "${DBContract.Entry.sentimentScore} TEXT)"
 
             val SQL_CREATE_ENTRIES2 = "CREATE TABLE IF NOT EXISTS ${DBContract.Entry.table_name2} (" +
                     "${BaseColumns._ID} INTEGER PRIMARY KEY," +
                     "${DBContract.Entry.date} TEXT," +
                     "${DBContract.Entry.text} TEXT," +
-                    "${DBContract.Entry.sentimentScore} TEXT," +
-                    "${DBContract.Entry.sentimentMagnitude} TEXT)"
+                    "${DBContract.Entry.sentimentScore} TEXT)"
 
             val SQL_CREATE_ENTRIES3 = "CREATE TABLE IF NOT EXISTS ${DBContract.Entry.table_name3} (" +
                     "${BaseColumns._ID} INTEGER PRIMARY KEY," +
@@ -67,14 +65,14 @@ class Database {
 
         override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
             val SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS ${DBContract.Entry.table_name1}"
-            val table_name2 = "DROP TABLE IF EXISTS ${DBContract.Entry.table_name2}"
-            val table_name3 = "DROP TABLE IF EXISTS ${DBContract.Entry.table_name3}"
-            val table_name4 = "DROP TABLE IF EXISTS ${DBContract.Entry.table_name4}"
+            val SQL_DELETE_ENTRIES2 = "DROP TABLE IF EXISTS ${DBContract.Entry.table_name2}"
+            val SQL_DELETE_ENTRIES3 = "DROP TABLE IF EXISTS ${DBContract.Entry.table_name3}"
+            val SQL_DELETE_ENTRIES4 = "DROP TABLE IF EXISTS ${DBContract.Entry.table_name4}"
 
             db.execSQL(SQL_DELETE_ENTRIES)
-            db.execSQL(table_name2)
-            db.execSQL(table_name3)
-            db.execSQL(table_name4)
+            db.execSQL(SQL_DELETE_ENTRIES2)
+            db.execSQL(SQL_DELETE_ENTRIES3)
+            db.execSQL(SQL_DELETE_ENTRIES4)
             onCreate(db)
         }
 

@@ -1,6 +1,7 @@
 package com.example.waru
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.provider.BaseColumns
 import android.provider.ContactsContract.Data
@@ -247,6 +248,7 @@ class MainActivity : AppCompatActivity() {
                 //EventDecorator 객체를 생성할 때 this를 사용하여 액티비티의 Context를 전달
                 decorators.add(EventDecorator(this, setOf(selectedDate), colorResourceId))
             }
+
         }
 
         cursor.close()
@@ -259,7 +261,7 @@ class MainActivity : AppCompatActivity() {
         return when (color) {
             "color1" -> R.color.purple_200
             "color2" -> R.color.purple_500
-            "color3" -> R.color.white
+            "color3" -> R.color.teal_700
             else -> R.color.black
         }
     }

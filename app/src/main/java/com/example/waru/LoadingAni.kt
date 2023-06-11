@@ -5,7 +5,7 @@ import android.view.animation.Animation
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
-class LoadingAni(private val loadingTextView: TextView) : AppCompatActivity() {
+class LoadingAni(private val loadingTextView: TextView) {
     private lateinit var animation: AlphaAnimation
 
     private fun animateLoadingText() {
@@ -32,7 +32,10 @@ class LoadingAni(private val loadingTextView: TextView) : AppCompatActivity() {
     }
 
     fun stopAnimation() {
-        animation.cancel()
+        //변수가 초기화 되어있으면 애니메이션 취소
+        if (::animation.isInitialized) {
+            animation.cancel()
+        }
     }
 
     fun startLoding(){

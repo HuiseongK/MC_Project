@@ -25,7 +25,7 @@ class SubActivity2 : AppCompatActivity() {
 
         val tab = binding.tab
         val tab1:TabLayout.Tab = tab.newTab()
-        tab1.text="오늘의 총평"
+        tab1.text="하루의 총평"
         tab.addTab(tab1)
 
         val tab2:TabLayout.Tab = tab.newTab()
@@ -42,7 +42,7 @@ class SubActivity2 : AppCompatActivity() {
                 val transaction = supportFragmentManager.beginTransaction()
                 when(tab?.text){
                     //intent로 넘겨받은 날짜를 인자로 넘김
-                    "오늘의 총평" -> transaction.replace(binding.tabContent.id,FragmentOne(date))
+                    "하루의 총평" -> transaction.replace(binding.tabContent.id,FragmentOne(date))
                     "점수표" -> transaction.replace(binding.tabContent.id,FragmentTwo(date))
                }
                 transaction.commit()

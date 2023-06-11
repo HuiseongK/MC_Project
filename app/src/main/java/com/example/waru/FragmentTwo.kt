@@ -46,7 +46,7 @@ class FragmentTwo(private val date: String?) : Fragment() {
             isDbHelperInitialized = true
         }
         val db = dbHelper.readableDatabase
-        val query = "SELECT ${Database.DBContract.Entry.text}, ${Database.DBContract.Entry.sentimentScore}, ${Database.DBContract.Entry.sentimentMagnitude} " +
+        val query = "SELECT ${Database.DBContract.Entry.text}, ${Database.DBContract.Entry.sentimentScore} " +
                 "FROM ${Database.DBContract.Entry.table_name1} " +
                 "WHERE ${Database.DBContract.Entry.date} = ?"
         val selectionArgs = arrayOf(date ?: "")
@@ -59,14 +59,11 @@ class FragmentTwo(private val date: String?) : Fragment() {
             val sentence = cursor.getString(cursor.getColumnIndexOrThrow(Database.DBContract.Entry.text))
             val scoreString =
                 cursor.getString(cursor.getColumnIndexOrThrow(Database.DBContract.Entry.sentimentScore))
-            val magnitudeString =
-                cursor.getString(cursor.getColumnIndexOrThrow(Database.DBContract.Entry.sentimentMagnitude))
             val score = scoreString.toFloatOrNull() ?: 0.0f
-            val magnitude = magnitudeString.toFloatOrNull() ?: 0.0f
 
             //. 을 통해서 문장 분리한 것을 고려하여 출력될 때는 .을 제외함
             val daily = sentence.dropLast(1)
-            val sentenceData = MyElement(daily, score.toString(), magnitude.toString())
+            val sentenceData = MyElement(daily, score.toString())
             sentenceList.add(sentenceData)
 
             cursor.moveToNext()
@@ -84,8 +81,8 @@ class FragmentTwo(private val date: String?) : Fragment() {
             isDbHelperInitialized = true
         }
         val db = dbHelper.readableDatabase
-        val query = "SELECT ${Database.DBContract.Entry.text}, ${Database.DBContract.Entry.sentimentScore}, ${Database.DBContract.Entry.sentimentMagnitude} " +
-                "FROM ${Database.DBContract.Entry.table_name1} " +
+        val query = "SELECT ${Database.DBContract.Entry.text}, ${Database.DBContract.Entry.sentimentScore} " +
+                "FROM ${Database.DBContract.Entry.table_name2} " +
                 "WHERE ${Database.DBContract.Entry.date} = ?"
         val selectionArgs = arrayOf(date ?: "")
         val cursor = db.rawQuery(query, selectionArgs)
@@ -95,13 +92,10 @@ class FragmentTwo(private val date: String?) : Fragment() {
         while (!cursor.isAfterLast) {
             val scoreString =
                 cursor.getString(cursor.getColumnIndexOrThrow(Database.DBContract.Entry.sentimentScore))
-            val magnitudeString =
-                cursor.getString(cursor.getColumnIndexOrThrow(Database.DBContract.Entry.sentimentMagnitude))
             val score = scoreString.toFloatOrNull()
-            val magnitude = magnitudeString.toFloatOrNull()
 
-            if (score != null && magnitude != null) {
-                val result = "Score: $score\nMagnitude: $magnitude"
+            if (score != null) {
+                val result = "Score: $score"
                 resultBuilder.append(result).append("\n")
             }
 
