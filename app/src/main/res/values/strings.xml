@@ -9,5 +9,5 @@
     <string name="score">score: %s</string>
     <string name="Frag1">감정 분석 결과</string>
     <string name="Frag2">오늘 하루</string>
-    <string name="colortext">0.25 ~ 1.0 : light purple\n-0.25 ~ 0.25 : dark purple\n-1.0 ~ -0.25 : teal</string>
+    <string name="colortext">0.25 ~ 1.0 : light purple\n-0.25 ~ 0.25 : dark purple\n-1.0 ~ -0.25 : light gray</string>
 </resources>

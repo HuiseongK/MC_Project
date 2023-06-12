@@ -97,7 +97,6 @@ dependencies {
     //coroutine 사용
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3'
 
-
     // GPT API 사용 - http 클라이언트 엔진
     implementation "com.squareup.okhttp3:okhttp:4.10.0"
 }

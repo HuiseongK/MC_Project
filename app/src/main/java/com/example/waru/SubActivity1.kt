@@ -2,10 +2,8 @@ package com.example.waru
 
 import android.annotation.SuppressLint
 import android.content.ContentValues
-import android.content.Context
 import android.content.Intent
 import android.database.Cursor
-import android.icu.text.SimpleDateFormat
 import android.os.Bundle
 import android.provider.BaseColumns
 import android.text.TextUtils
@@ -15,7 +13,6 @@ import android.view.MenuItem
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.widget.NestedScrollView
 import androidx.loader.app.LoaderManager
 import androidx.loader.content.Loader
 import com.example.waru.databinding.AcitivitySub1Binding
@@ -29,7 +26,6 @@ import com.google.api.services.language.v1.CloudNaturalLanguageScopes
 import com.google.api.services.language.v1.model.AnalyzeSentimentRequest
 import com.google.api.services.language.v1.model.AnalyzeSentimentResponse
 import com.google.api.services.language.v1.model.Document
-import com.prolificinteractive.materialcalendarview.CalendarDay
 import kotlinx.coroutines.*
 import java.io.IOException
 import java.util.*
@@ -333,7 +329,7 @@ class SubActivity1 :AppCompatActivity() {
     private fun deliverResponse(response: GenericJson) {
         Log.d("TAG", "Generic Response --> $response")
         runOnUiThread {
-            Toast.makeText(this@SubActivity1, "Response Recieved from Cloud NLP API", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(this@SubActivity1, "Response Recieved from Cloud NLP API", Toast.LENGTH_SHORT).show()
             try {
                 saveResponseToInternalStorage(response)
             } catch (e: IOException) { e.printStackTrace() }
