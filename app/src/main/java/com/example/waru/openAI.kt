@@ -2,22 +2,19 @@ package com.example.waru
 
 import android.content.ContentValues
 import android.content.Context
-import android.util.Base64
 import android.util.Log
-import com.google.api.client.json.Json
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.BufferedReader
-import java.io.File
 import java.io.IOException
 import java.io.InputStreamReader
-import java.nio.charset.Charset
 import java.util.concurrent.TimeUnit
 
 class openAI() {
 
+    // res/raw/openai_credential.txt 파일을 읽어 API KEY를 반환함
     fun getKey(context: Context): String{
         val stringBuilder = StringBuilder()
 
@@ -38,22 +35,12 @@ class openAI() {
     }
 
 
-    fun sendChatCompletionRequest(apiKey: String, date: String, diary: String, dbHelper: Database.DbHelper) {
+    fun sendChatRequest(apiKey: String, date: String, diary: String, dbHelper: Database.DbHelper) {
         val client = OkHttpClient().newBuilder()
             .connectTimeout(60, TimeUnit.SECONDS)
             .writeTimeout(120, TimeUnit.SECONDS)
             .readTimeout(60, TimeUnit.SECONDS)
             .build()
-
-//        val prompt = "Analyze user-provided diaries and generate responses to them.\n" +
-//                "- If the content is positive, you can create a one-sentence comment, and if the content is practical, feedback the contents of the diary to generate comments of advice or encouragement.\n" +
-//                "\n" +
-//                "- Tone: Polite\n" +
-//                "- Style: Concisely\n" +
-//                "- Reader level: University students\n" +
-//                "- Legnth: within 50 characters\n" +
-//                "- Perspective: Advisor\n" +
-//                "- Format: Print in dialog type answer format into Korean"
 
         val prompt = "Analyze user-provided diaries and generate responses to them.\n" +
                 "- If the content is positive, you can create a one-sentence comment, and if the content is practical, feedback the contents of the diary to generate comments of advice or encouragement.\n" +

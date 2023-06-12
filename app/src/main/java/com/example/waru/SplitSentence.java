@@ -1,7 +1,6 @@
 package com.example.waru;
 
 import java.util.ArrayList;
-
 import kss.Kss;
 
 public class SplitSentence {

@@ -420,7 +420,7 @@ class SubActivity1 :AppCompatActivity() {
         val open = openAI()
         val key = open.getKey(baseContext)
         val diary = readDiary(todayDate)
-        open.sendChatCompletionRequest(key, todayDate, diary, dbHelper)
+        open.sendChatRequest(key, todayDate, diary, dbHelper)
 
         // SubActivity2에서 저장된 분석 결과를 사용하기 위해 해당 날짜를 intent로 넘겨줌
         proceedToSubActivity2()

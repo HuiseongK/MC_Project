@@ -53,10 +53,8 @@ android {
 
 }
 
-
 dependencies {
     implementation 'androidx.fragment:fragment-ktx:1.5.7'
-//    implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.9.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
@@ -64,13 +62,14 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     implementation 'com.prolificinteractive:material-calendarview:1.4.3'
-    //noinspection GradleCompatible
+
+    // noinspection GradleCompatible
     implementation 'com.android.support:design:28.0.0'
 
-    //Google API 클라이언트 라이브러리가 프로젝트에 추가
-    implementation 'com.google.api-client:google-api-client:1.31.0'
-    implementation 'com.google.api-client:google-api-client-android:1.31.0'
-    implementation 'com.google.apis:google-api-services-language:v1-rev20210512-1.31.0'
+    //Google API Client Libraries
+//    implementation 'com.google.api-client:google-api-client:1.31.0'
+//    implementation 'com.google.api-client:google-api-client-android:1.31.0'
+//    implementation 'com.google.apis:google-api-services-language:v1-rev20210512-1.31.0'
 
     // google API Client Libraries
     implementation("com.google.http-client:google-http-client:$googleApiClientVersion") {
@@ -89,12 +88,10 @@ dependencies {
     // google API client Libraries 충돌 해결하기 위해 다시 호출
     implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
 
-//    implementation 'org.python:jython-standalone:2.7.2'
-
     // kss-java
     implementation 'io.github.sangdee:kss-java:2.6.1'
 
-    //coroutine 사용
+    // coroutine 사용
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3'
 
     // GPT API 사용 - http 클라이언트 엔진

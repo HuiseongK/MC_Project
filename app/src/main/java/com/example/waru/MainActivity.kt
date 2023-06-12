@@ -1,11 +1,8 @@
 package com.example.waru
 
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.provider.BaseColumns
-import android.provider.ContactsContract.Data
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -30,14 +27,6 @@ class MainActivity : AppCompatActivity() {
             binding.colortext.visibility=View.GONE
         }
 
-        // gpt test
-//        val testbtn = binding.test
-//        val open = openAI()
-//        testbtn.setOnClickListener{
-//            val key = open.getKey(baseContext)
-//            open.sendChatCompletionRequest(key)
-//        }
-
         //현재 날짜 설정 -> calender객체 만들어줌
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
@@ -60,7 +49,6 @@ class MainActivity : AppCompatActivity() {
             binding.mainbtn.text = "일기 기록하기"
         }
 
-
         //해당날짜의 일기 작성여부에 따라 버튼의 text 및 textView 변경
         calendarView.setOnDateChangedListener { _, selectedDate, _ ->
             val hasDiary = checkIfDiaryExistsForDate(selectedDate)
@@ -75,7 +63,6 @@ class MainActivity : AppCompatActivity() {
                 binding.Existmaintext.visibility=View.GONE
                 binding.mainbtn.text = "일기 기록하기"
             }
-
         }
 
         //날짜 선택 후 버튼을 누르면 sub1로 날짜 데이터가 넘어감
@@ -259,9 +246,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun getColorResource(color: String?): Int {
         return when (color) {
-            "color1" -> R.color.purple_200
-            "color2" -> R.color.purple_500
-            "color3" -> R.color.light_gray
+            "color1" -> R.color.purple_200 // 0.25 ~ 1.0
+            "color2" -> R.color.purple_500 // -0.25 ~ 0.25
+            "color3" -> R.color.light_gray // -1.0 ~ 0.25
             else -> R.color.black
         }
     }

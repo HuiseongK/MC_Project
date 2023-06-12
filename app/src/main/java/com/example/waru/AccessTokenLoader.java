@@ -9,6 +9,7 @@ import com.google.api.services.language.v1.CloudNaturalLanguageScopes;
 import java.io.IOException;
 import java.io.InputStream;
 
+// Google API를 사용하는데 사용됨.
 public class AccessTokenLoader extends AsyncTaskLoader<String> {
     private static final String TAG = "AccessTokenLoader";
     private static final String PREFS = "AccessTokenLoader";

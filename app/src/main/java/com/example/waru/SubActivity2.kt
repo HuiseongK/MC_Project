@@ -75,5 +75,4 @@ class SubActivity2 : AppCompatActivity() {
         return true
     }
 
-
 }

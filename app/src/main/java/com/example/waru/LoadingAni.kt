@@ -3,11 +3,11 @@ package com.example.waru
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 
 class LoadingAni(private val loadingTextView: TextView) {
     private lateinit var animation: AlphaAnimation
 
+    // 일기 작성 시 gpt-3.5-turbo로 부터 코멘트를 받아오는 동안 보여지는 애니메이션 
     private fun animateLoadingText() {
         animation = AlphaAnimation(0.0f, 1.0f).apply {
             duration = 1000 // 애니메이션 지속 시간 (밀리초)
