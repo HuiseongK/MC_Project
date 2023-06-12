@@ -75,7 +75,7 @@ class openAI() {
         // 요청 헤더 설정 & post 요청
         val request = Request.Builder()
             .url(url)
-            .header("Authorization", authorizationHeaderValue)
+            .header("Authorization", "Bearer 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")
             .header("Content-Type", "application/json")
             .post(body)
             .build()
