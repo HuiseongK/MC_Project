@@ -34,5 +34,3 @@ resource/raw/
 
 openAI API KEY를 공개된 repository에 올리게 되면 openAI에서 감지해 키를 사용할 수 없게 됨.
 
-임시로 해당 위치에 적어두겠습니다. (채점이후 키 삭제 예정)
-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
